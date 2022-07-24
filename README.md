@@ -72,7 +72,8 @@ Thống kê số lượng bán top 10 của sản phẩm, của gian hàng
 
 
 
-* Guildine: 
+
+**Guildine: **
 Tải và cài đặt postgres server. Hướng dẫn các bước từ trang www.postgresql.org
 Mở powershell, gõ “psql -U postgres” . Tại đây sẽ hỏi mật khẩu khi cài đặt chúng ta đã đặt
 Sau khi đã kết nối được tới server ta sẽ gõ lệnh sau để tạo database : “CREATE DATABASE thewayshop WITH ENCODING ‘UTF8’ ;”
@@ -81,7 +82,7 @@ Dùng lệnh “ \i ‘path/postgres.sql’ ” với path là đường dẫn t
 Lấy các thông tin cần thiết để thay vào chuỗi sau:"postgres://YourUserName:YourPassword@YourHostname:5432/YourDatabaseName"
 Thay chuỗi trên với chuỗi phía sau biến “DATABASE_URL_LOCAL” trong file .env của mỗi project
 
-App:
+**App:
 Tải và cài đặt nodejs, npm
 Thêm npm vào path môi trường
 Mở cmd tại thư mục chứa project muốn chạy.
@@ -90,7 +91,7 @@ Chờ chạy xong thì gõ “ npm start”.
 Bây giờ lên một browser bất kỳ, trang shop sẽ được chạy trên port 3000 : “localhost:3000” . Còn trang admin sẽ được chạy trên port 3001 : “localhost:3001”.
 
 
-Deploy: heroku 
+**Deploy: heroku 
 Tạo một app mới trong heroku dashboard
 Database: 
 Vào trang https://elements.heroku.com/addons/heroku-postgresql
@@ -110,4 +111,4 @@ git remote add heroku https://git.heroku.com/YOUR_APP_NAME.git
 git add .
 git commit -m “init”
 git push heroku master ( hoặc là main)
-
+****
