@@ -1,0 +1,601 @@
+{{#section 'style'}}
+<style>
+    .star-container label {
+        cursor: pointer;
+        display: grid;
+    }
+
+    .star-container i {
+        width: 3rem;
+        height: 3rem;
+        padding: 0.15rem;
+        grid-column: 1;
+        grid-row: 1;
+        
+    }
+    .star-container .substar{
+        color: #d33b33; 
+        z-index: -1;
+    } 
+
+    /* hide radio buttons */
+
+    input[name="star"] {
+        display: inline-block;
+        width: 0;
+        opacity: 0;
+        margin-left: -2px;
+    }
+
+    .star-source {
+        width: 0;
+        height: 0;
+        opacity: 0.3;
+    }
+
+    .star {
+        color: transparent;
+        transition: color 0.2s ease-in-out;
+    }
+
+    .star-container {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: center;
+    }
+
+    label:hover ~ label .star,
+    i.star:hover,
+    input[name="star"]:focus ~ label .star,
+    input[name="star"]:checked ~ label .star {
+        color: #d33b33;
+    }
+
+    input[name="star"]:checked + label .star {
+        animation: starred 0.5s;
+    }
+
+    input[name="star"]:checked + label {
+        animation: scaleup 1s;
+    }
+
+    #rating{
+        display: flex;
+        align-items: center;
+    }
+
+    #rating .paging-icon{
+        cursor: pointer;
+        color: #d33b33;
+        z-index: 10;
+    }
+    #rating .paging-icon:hover{
+        color: :#691712;
+    }
+    #comment-container{
+        max-height: 330px;
+        overflow-y: scroll;
+    }
+    ::-webkit-scrollbar{
+        width: 2px;
+    }
+    ::-webkit-scrollbar-track {
+        box-shadow: inset 0 0 5px grey; 
+        border-radius: 5px;
+    }
+    ::-webkit-scrollbar-thumb {
+        background: #d33b33; 
+        border-radius: 5px;
+    }
+
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+        background: #c9170d; 
+        width: 5px;
+    }
+    @keyframes scaleup {
+        from {
+            transform: scale(1.2);
+        }
+        to {
+            transform: scale(1);
+        }
+        }
+
+        @keyframes starred {
+        from {
+            color: #691712;
+        }
+        to {
+            color: #d33b33;
+        }
+    }
+
+
+</style>
+{{/section}}
+<!-- Start Shop Detail  -->
+<div class="shop-detail-box-main">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-5 col-lg-5 col-md-6">
+                <div id="carousel-example-1" class="single-product-slider carousel slide" data-ride="carousel">
+                    <div class="carousel-inner" role="listbox">
+                        <div class="carousel-item active"> <img class="d-block w-100 min-vh-100" src="{{product.image}}" alt="First slide" height="415" style="object-fit: scale-down;"> </div>
+                        <div class="carousel-item"> <img class="d-block w-100 min-vh-100" src="{{pro_image.[0].image}}" alt="Second slide" height="415" style="object-fit: scale-down;"> </div>
+                        <div class="carousel-item"> <img class="d-block w-100 min-vh-100" src="{{pro_image.[1].image}}" alt="Third slide" height="415" style="object-fit: scale-down;"> </div>
+                    </div>
+                    <a class="carousel-control-prev" href="#carousel-example-1" role="button" data-slide="prev"> 
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="sr-only">Previous</span> 
+                </a>
+                    <a class="carousel-control-next" href="#carousel-example-1" role="button" data-slide="next"> 
+                    <i class="fa fa-angle-right" aria-hidden="true"></i> 
+                    <span class="sr-only">Next</span> 
+                </a>
+                    <ol class="carousel-indicators">
+                        <li data-target="#carousel-example-1" data-slide-to="0" class="active">
+                            <img class="d-block w-100 img-fluid" src="{{product.image}}" alt="" />
+                        </li>
+                        {{#each pro_image}}
+                        <li data-target="#carousel-example-1" data-slide-to="{{inc @index}}">
+                            <img class="d-block w-100 img-fluid" src="{{this.image}}" alt="" />
+                        </li>
+                        {{/each}}
+                    </ol>
+                </div>
+            </div>
+            <div class="col-xl-7 col-lg-7 col-md-6">
+                <div class="single-product-details">
+                    <h2>{{product.title}}</h2>
+                    <h5>${{product.price}}</h5>
+                    <p class="available-stock"><span> More than {{product.available}} available / <a href="#">{{product.sold}} sold </a></span></p>
+                    <h4>Short Description:</h4>
+                    <p>{{product.description}} </p>
+                    <h4 style="display: inline-block;margin-top:0px;">Category:</h4>
+                    <a href="/product/category/{{product.cate_name}}">{{product.cate_name}}</a>/<a href="/product/tag/{{product.tag_name}}">{{product.tag_name}}</a>
+                    
+                    <h4 style="display: inline-block;margin-top:0px;">Brand:{{product.brand}}</h4>
+
+                    <div class="price-box-bar">
+                        <div class="cart-and-bay-btn">
+                            <a class="btn hvr-hover" data-fancybox-close="" href="#">Buy New</a>
+                            <a class="btn hvr-hover cart" data-fancybox-close="" data-id="{{product.id}}" data-image="{{product.image}}"  data-title="{{product.title}}" data-price="{{product.price}}">Add to cart</a>
+                        </div>
+                    </div>
+
+                    <div class="add-to-btn">
+                        <div class="add-comp">
+                            <a class="btn hvr-hover add-wishlist"  data-id="{{product.id}}" data-image="{{product.image}}"  data-title="{{product.title}}" data-price="{{product.price}}">
+                                <i class="far fa-heart" style="pointer-events: none;"></i>
+                                 Add to wishlist
+                            </a>
+                            <a class="btn hvr-hover" href="#"><i class="fas fa-sync-alt"></i> Add to Compare</a>
+                        </div>
+                        <div class="share-bar">
+                            <a class="btn hvr-hover" href="#"><i class="fab fa-facebook" aria-hidden="true"></i></a>
+                            <a class="btn hvr-hover" href="#"><i class="fab fa-google-plus" aria-hidden="true"></i></a>
+                            <a class="btn hvr-hover" href="#"><i class="fab fa-twitter" aria-hidden="true"></i></a>
+                            <a class="btn hvr-hover" href="#"><i class="fab fa-pinterest-p" aria-hidden="true"></i></a>
+                            <a class="btn hvr-hover" href="#"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin-top: 20px;">
+            <div class="col-lg-12">
+                <div class="special-menu text-center">
+                    <div class="button-group filter-button-group">
+                        <button class="active"  id = "btn-related">Related Products</button>
+                        <button  id= "btn-rating">Rating</button>
+                        <button id= "btn-comment">Comment</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row my-6 d-flex justify-content-center">
+            <div class="col-lg-12 " id="related-product">
+                <div class="featured-products-box owl-carousel owl-theme">
+                    {{#each products}}
+                    <div class="item">
+                        <div class="products-single fix">
+                            <div class="box-img-hover">
+                                <img src="{{this.image}}" class="img-fluid" alt="Image" style="object-fit: scale-down;" height="330">
+                                <div class="mask-icon">
+                                    <ul>
+                                        <li><a href="/product/{{this.id}}" data-toggle="tooltip" data-placement="right" title="View"><i class="fas fa-eye"></i></a></li>
+                                        <li><a href="#" data-toggle="tooltip" data-placement="right" title="Compare"><i class="fas fa-sync-alt"></i></a></li>
+                                        <li><a class="add-wishlist" data-id="{{this.id}}" data-image="{{this.image}}"  data-title="{{this.title}}" data-price="{{this.price}}" data-toggle="tooltip" data-placement="right" title="Add to Wishlist"><i
+                                            class="far fa-heart" style="pointer-events: none;"></i></a></li>
+                                    </ul>
+                                    <a class="cart" data-id="{{this.id}}" data-image="{{this.image}}"  data-title="{{this.title}}" data-price="{{this.price}}">Add to Cart</a>
+                                </div>
+                            </div>
+                            <div class="why-text">
+                                <h4>{{this.title}}</h4>
+                                <h5> ${{this.price}}</h5>
+                            </div>
+                        </div>
+                    </div>
+                    {{else}}
+                    <h3>There is no related to this product</h3>
+                    {{/each}}
+                </div>
+            </div>
+            <div class="row" id="rating" style="display: none;">
+                <i class="fas fa-arrow-circle-left paging-icon" id="previous"></i>
+                <div class="col-lg-12 row" id="rating-container">
+                </div>
+                <i class="fas fa-arrow-circle-right paging-icon" id="next"></i>
+                {{#if user}}
+                <form class="col-lg-12 row">
+                    <div class="star-container col-4" >
+                        <input type="radio" name="star" value="5" id="five">
+                        <label for="five">
+                            <i class="far fa-star substar" >
+                            </i>
+                            <i class="fa fa-star star">
+                            <a xlink:href="#star"></a>
+                            </i>
+                        </label>
+                        <input type="radio" name="star" value="4" id="four">
+                        <label for="four">
+                            <i class="far fa-star substar" ></i>
+                            <i class="fa fa-star star">
+                            <a xlink:href="#star"></a>
+                            </i>
+                        </label>
+                        <input type="radio" name="star" value="3" id="three">
+                        <label for="three">
+                            <i class="far fa-star substar" ></i>
+                            <i class="fa fa-star star">
+                            <a xlink:href="#star"></a>
+                            </i>
+                        </label>
+                        <input type="radio" name="star" value="2"id="two">
+                        <label for="two">
+                            <i class="far fa-star substar" ></i>
+                            <i class="fa fa-star star">
+                            <a xlink:href="#star"></a>
+                            </i>
+                        </label>
+                        <input type="radio" name="star" value="1" id="one">
+                        <label for="one">
+                            <i class="far fa-star substar" ></i>
+                            <i class="fa fa-star star">
+                            <a xlink:href="#star"></a>
+                            </i>
+                        </label>
+                    </div>
+                    <div class="col-6">
+                        <input type="text" id="inp-rating-content" class="form-control" placeholder="Write what you think about this product">
+                    </div>
+                    <div class="col-2">
+                        <button id="btn-add-rating" class="btn btn-danger" data-user_id="{{user.id}}" data-pro_id="{{product.id}}">Add</button>
+                    </div>
+                </form>
+                {{else}}
+                <span><a href="/login">Login</a> to leave a rating.</span>
+                {{/if}}
+            </div>
+            <div class="row" id="comment" style="display: none;">
+                <div class="col-lg-12 row" id="comment-container" >
+                    
+                </div>
+                <form class="col-lg-12 row">
+                    <div class="star-container col-3 offset-1" >
+                        <input type="text" id="inp-comment-name" class="form-control" 
+                        {{#if user}}value="{{user.name}}" readonly {{else}} placeholder="Your Name" {{/if}} required>
+                    </div>
+                    <div class="col-6">
+                        <input type="text"  id="inp-comment-content" class="form-control" placeholder="Leave a comment" required>
+                    </div>
+                    <div class="col-2">
+                        <button id="btn-add-comment" class="btn btn-danger">Add</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Cart -->
+{{#section 'script'}}
+<script>
+    add_wishlist_event();
+    add_cart_event();
+    let numberRating = {{{number_rating}}};
+    let numberComment = {{{number_comment}}}||0;
+    let maxPageRating = Math.ceil(numberRating/9);
+    let maxPageComment = Math.ceil(numberComment/9);
+    const product_id = "{{{product.id}}}";
+    let ratingCache =[];
+    let currentPage=1;
+    $('document').ready(()=>{
+        if(maxPageRating===0){
+            console.log('No rating')
+        }
+        else{
+            $.get(`/api/product/rating?proid=${product_id}`,(data,status)=>{
+                if(status==="success"){
+                    data.forEach(rating=>{
+                        addRating(rating);
+                    })
+                    ratingCache[1]=data;
+                }
+                else{
+                    console.log('error',data);
+                }
+            })
+        }
+        
+        if(maxPageComment===0){
+            console.log('No comment')
+        }
+        else{
+            $.get(`/api/product/comment?proid=${product_id}`,(data,status)=>{
+                if(status==="success"){
+                    data.forEach(comment=>{
+                        addComment(comment);
+                    })
+                }
+                else{
+                    console.log('error',data);
+                }
+            })
+        }
+    })
+    document.querySelector('#previous').addEventListener('click',()=>{
+        if(maxPageRating===0){
+            return;
+        }
+        if(currentPage===1){
+            return;
+        }
+        if(ratingCache[currentPage-1]){
+            $('#rating-container').fadeOut(500);
+            document.querySelector('#rating-container').innerHTML ='';
+            const data = ratingCache[currentPage-1];
+            data.slice().reverse().forEach(rating=>{
+                addRating(rating);
+            })
+            $('#rating-container').fadeIn(500);
+            currentPage--;
+        }
+        else{
+            $.get(`/api/product/rating?proid=${product_id}&page=${currentPage-1}`,(data,status)=>{
+                if(status==='success'){
+                    currentPage--;
+                    $('#rating-container').fadeOut(500);
+                    document.querySelector('#rating-container').innerHTML ='';
+                    data.slice().reverse().forEach(rating=>{
+                        addRating(rating);
+                    })
+                    $('#rating-container').fadeIn(500);
+                    ratingCache[currentPage]=data;
+                }
+            })
+        }
+    })
+    document.querySelector('#next').addEventListener('click',()=>{
+        if(maxPageRating===0){
+            return;
+        }
+        if(currentPage===maxPageRating){
+            return;
+        }
+        if(ratingCache[currentPage+1]){
+            $('#rating-container').fadeOut(500);
+            document.querySelector('#rating-container').innerHTML ='';
+            const data = ratingCache[currentPage+1];
+            data.slice().reverse().forEach(rating=>{
+                addRating(rating);
+            })
+            $('#rating-container').fadeIn(500);
+            currentPage++;
+        }
+        else{
+            $.get(`/api/product/rating?proid=${product_id}&page=${currentPage+1}`,(data,status)=>{
+                if(status==='success'){
+                    currentPage++;
+                    $('#rating-container').fadeOut(500);
+                    document.querySelector('#rating-container').innerHTML ='';
+                    data.slice().reverse().forEach(rating=>{
+                        addRating(rating);
+                    })
+                    $('#rating-container').fadeIn(500);
+                    ratingCache[currentPage]=data;
+                }
+            })
+        }
+    })
+
+
+
+    const btn_related = document.querySelector('#btn-related');
+    const btn_rating = document.querySelector('#btn-rating');
+    const btn_comment = document.querySelector('#btn-comment');
+    btn_related.addEventListener('click',()=>{
+        if(!btn_related.classList.contains('active')){
+            $('#rating').fadeOut(0);
+            $('#comment').fadeOut(0);
+            $('#related-product').fadeIn(700);
+        }
+    })
+    btn_rating.addEventListener('click',()=>{
+        if(!btn_rating.classList.contains('active')){
+            $('#related-product').fadeOut(0);
+            $('#comment').fadeOut(0);
+            $('#rating').fadeIn(700);
+        }
+    })
+    btn_comment.addEventListener('click',()=>{
+        $('#rating').fadeOut(0);
+        $('#related-product').fadeOut(0);
+        $('#comment').fadeIn(700);
+    })
+    
+
+    //rating
+    const btn_add_rating = document.querySelector('#btn-add-rating');
+    const one = document.querySelector('#one');
+    const two = document.querySelector('#two');
+    const three = document.querySelector('#three');
+    const four = document.querySelector('#four');
+    const five = document.querySelector('#five');
+    if(btn_add_rating){
+        btn_add_rating.addEventListener('click',(e)=>{
+            e.preventDefault();
+            if(!document.querySelector('#inp-rating-content').value){
+                document.querySelector('#inp-rating-content').focus();
+                return;
+            }
+            let star = 0;
+            if(one.checked){
+                one.checked = false;
+                star = 1;
+            }
+            else if(two.checked){
+                two.checked = false;
+                star = 2;
+            }
+            else if(three.checked){
+                three.checked = false;
+                star = 3;
+            }
+            else if(four.checked){
+                four.checked = false;
+                star = 4;
+            }
+            else if(five.checked){
+                five.checked = false;
+                star = 5;
+            }
+            if(star === 0){
+                document.querySelector('.star-container').focus();
+                return;
+            }
+            const content = document.querySelector('#inp-rating-content').value;
+            const user_id = btn_add_rating.dataset.user_id;
+            const product_id = btn_add_rating.dataset.pro_id;
+            $.post('/api/product/rating',{
+                user_id:user_id,
+                product_id:product_id,
+                star:star,
+                content:content
+            },(data,status)=>{
+                if(status==='success'){
+                    document.querySelector('#inp-rating-content').value =''
+                    ratingCache =[];
+                    currentPage = 2;
+                    numberRating++;
+                    maxPageRating = Math.ceil(numberRating/9);
+                    document.querySelector('#previous').click();
+                }
+                else{
+                    console.log('error',data);
+                }
+            })
+        })
+    }
+    
+
+    function addRating(rating){
+        const rating_container = document.querySelector('#rating-container');
+        if(rating_container.childElementCount >= 9){
+            rating_container.removeChild(rating_container.lastElementChild);
+        }
+        let star ='';
+        for(let i =0;i<rating.star;i++){
+            star+= '<i class="fa fa-star fa-xs" style="color: #d33b33;"></i>';
+        }
+        let div =`<div class="col-4">
+                        <div class="row">
+                            <div class="col-2">
+                                <img src="${rating.image?rating.image:'/images/default-avatar.png'}"alt="avt" width="50" height="50">
+                            </div>
+                            <div class="col-10">
+                                <div class="row">
+                                    <div class="col-7">
+                                        <span><b>${rating.name}</b></span>
+                                    </div>
+                                    <div class="col-5">
+                                        ${star}
+                                    </div>
+                                </div>
+                                <p>${rating.content}</p>
+                            </div>
+                        </div>
+                    </div>`;
+        rating_container.innerHTML += div;
+    }
+
+
+    //comment 
+    const btn_add_comment = document.querySelector('#btn-add-comment');
+    const comment_container = document.querySelector('#comment-container');
+    let currPageComment = 1;
+
+    $('#comment-container').scroll(()=>{
+        if($('#comment-container').scrollTop() + $('#comment-container').height()==$('#comment-container')[0].scrollHeight) {
+            if(currPageComment >= maxPageComment){
+                return;
+            }
+            currPageComment++;
+            getComment()
+        }
+    })
+    btn_add_comment.addEventListener('click',(e)=>{
+        e.preventDefault();
+        if(!document.querySelector('#inp-comment-content').value){
+            document.querySelector('#inp-comment-content').focus();
+            return;
+        }
+        if(!document.querySelector('#inp-comment-name').value){
+            document.querySelector('#inp-comment-name').focus();
+            return;
+        }
+        const content = document.querySelector('#inp-comment-content').value;
+        const username = document.querySelector('#inp-comment-name').value;
+        $.post('/api/product/comment',{
+            user_name:username,
+            product_id:product_id,
+            content:content
+        },(data,status)=>{
+            if(status==='success'){
+                document.querySelector('#inp-comment-content').value ='';
+                currPageComment = 1;
+                numberComment++;
+                maxPageComment = Math.ceil(numberComment/9);
+                document.querySelector('#comment-container').innerHTML='';
+                getComment()
+            }
+            else{
+                console.log('error',data);
+            }
+        })
+    })
+    
+    function getComment(){
+        $.get(`/api/product/comment?proid=${product_id}&page=${currPageComment}`,(data,status)=>{
+            if(status==="success"){
+                data.forEach(comment=>{
+                    addComment(comment);
+                })
+            }
+            else{
+                console.log('error',data);
+            }
+        })
+    }
+
+    function addComment(comment){
+        let div =`<div class="col-lg-12 row">
+                    <div class="col-md-8 mx-auto">
+                        <span><b>${comment.user_name}:</b></span><p>${comment.content}</p>
+                    </div>
+                </div>`;
+        comment_container.innerHTML += div;
+    }
+</script>
+{{/section}}

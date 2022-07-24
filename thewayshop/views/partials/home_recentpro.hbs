@@ -1,0 +1,88 @@
+<!-- Start Products  -->
+<div class="products-box">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="title-all text-center">
+                    <h1>New Product</h1>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="special-menu text-center">
+                    <div class="button-group filter-button-group">
+                        <button ><a href="/product"> View All Product </a></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row special-list">
+            {{#each recent_product}}
+            <div class="col-lg-3 col-md-6 special-grid best-seller">
+                <div class="products-single fix">
+                    <div class="box-img-hover">
+                        <div class="type-lb">
+                            <p class="{{this.state}}">{{this.state}}</p>
+                        </div>
+                        <img src="{{this.image}}" class="img-fluid" alt="Image" style="object-fit: scale-down;" height="330">
+                        <div class="mask-icon">
+                            <ul>
+                                <li><a href="/product/{{this.id}}" data-toggle="tooltip" data-placement="right" title="View"><i
+                                            class="fas fa-eye"></i></a></li>
+                                <li><a href="#"  data-toggle="tooltip" data-placement="right" title="Compare"><i
+                                            class="fas fa-sync-alt"></i></a></li>
+                                <li><a class="add-wishlist" data-id="{{this.id}}" data-image="{{this.image}}"  data-title="{{this.title}}" data-price="{{this.price}}" data-toggle="tooltip" data-placement="right" title="Add to Wishlist"><i
+                                            class="far fa-heart" style="pointer-events: none;"></i></a></li>
+                            </ul>
+                            <a class="cart" data-id="{{this.id}}" data-image="{{this.image}}"  data-title="{{this.title}}" data-price="{{this.price}}">Add to Cart</a>
+                        </div>
+                    </div>
+                    <div class="why-text">
+                        <h4>{{this.title}}</h4>
+                        <h5> ${{this.price}}</h5>
+                    </div>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="title-all text-center">
+                    <h1>Top Product</h1>
+                </div>
+            </div>
+        </div>
+        <div class="row special-list">
+            {{#each top_pro}}
+            <div class="col-lg-3 col-md-6 special-grid best-seller">
+                <div class="products-single fix">
+                    <div class="box-img-hover">
+                        <div class="type-lb">
+                            <p class="{{this.state}}">{{this.state}}</p>
+                        </div>
+                        <img src="{{this.image}}" class="img-fluid" alt="Image" style="object-fit: scale-down;" height="330">
+                        <div class="mask-icon">
+                            <ul>
+                                <li><a href="/product/{{this.id}}" data-toggle="tooltip" data-placement="right" title="View"><i
+                                            class="fas fa-eye"></i></a></li>
+                                <li><a href="#"  data-toggle="tooltip" data-placement="right" title="Compare"><i
+                                            class="fas fa-sync-alt"></i></a></li>
+                                <li><a class="add-wishlist" data-id="{{this.id}}" data-image="{{this.image}}"  data-title="{{this.title}}" data-price="{{this.price}}" data-toggle="tooltip" data-placement="right" title="Add to Wishlist"><i
+                                            class="far fa-heart" style="pointer-events: none;"></i></a></li>
+                            </ul>
+                            <a class="cart" data-id="{{this.id}}" data-image="{{this.image}}"  data-title="{{this.title}}" data-price="{{this.price}}">Add to Cart</a>
+                        </div>
+                    </div>
+                    <div class="why-text">
+                        <h4>{{this.title}}</h4>
+                        <h5> ${{this.price}}</h5>
+                    </div>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+</div>
+<!-- End Products  -->

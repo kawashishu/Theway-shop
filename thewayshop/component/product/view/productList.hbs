@@ -1,0 +1,231 @@
+
+<!-- Start Shop Page  -->
+<div class="shop-box-inner">
+    <div class="container">
+        <div class="row">
+            {{>product_sidebar_left}}
+            <div class="col-xl-9 col-lg-9 col-sm-12 col-xs-12 shop-content-right">
+                <div class="right-product-box">
+                    {{>product_filter}}
+                    <div class="row product-categorie-box">
+                        {{>product_items}}
+                    </div>
+                    <div class="row justify-content-center">
+                        <ul id="pagination-demo" class="pagination-sm"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Shop Page -->
+{{#section 'script'}}
+<script>
+    let maxPage = {{{max_page}}}
+    const page_cache=[];
+    let curr_page = {{{page}}}||1;
+    const product_container = document.querySelector('#product-container');
+
+    function updateView(rawdata){
+        document.querySelector('#list-view').innerHTML='';
+        product_container.innerHTML='';
+        data = filter(rawdata);
+        data.forEach((pro)=>{
+            const div = `<div class="col-sm-6 col-md-6 col-lg-4 col-xl-4">
+                <div class="products-single fix">
+                    <div class="box-img-hover">
+                        <div class="type-lb">
+                            <p class="${pro.state}">${pro.state}</p>
+                        </div>
+                        <img src="${pro.image}" class="img-fluid" alt="Image" style="object-fit: scale-down;" height="330">
+                        <div class="mask-icon">
+                            <ul>
+                                <li><a href="/product/${pro.id}" data-toggle="tooltip" data-placement="right" title="View"><i class="fas fa-eye"></i></a></li>
+                                <li><a href="#" data-toggle="tooltip" data-placement="right" title="Compare"><i class="fas fa-sync-alt"></i></a></li>
+                                <li><a class="add-wishlist" data-id="${pro.id}" data-image="${pro.image}"  data-title="${pro.title}" data-price="${pro.price}" data-toggle="tooltip" data-placement="right" title="Add to Wishlist"><i class="far fa-heart" style="pointer-events:none;"></i></a></li>
+                            </ul>
+                            <a class="cart" data-id="${pro.id}" data-image="${pro.image}"  data-title="${pro.title}" data-price="${pro.price}">Add to Cart</a>
+                        </div>
+                    </div>
+                    <div class="why-text">
+                        <h4>${pro.title}</h4>
+                        <h5> $${pro.price}</h5>
+                    </div>
+                </div>
+            </div>`;
+            const div2 = `<div class="list-view-box">
+            <div class="row">
+                <div class="col-sm-6 col-md-6 col-lg-4 col-xl-4">
+                    <div class="products-single fix">
+                        <div class="box-img-hover">
+                            <div class="type-lb">
+                                <p class="${pro.state}">${pro.state}</p>
+                            </div>
+                            <img src="${pro.image}" class="img-fluid" alt="Image">
+                            <div class="mask-icon">
+                                <ul>
+                                    <li><a href="/product/${pro.id}" data-toggle="tooltip" data-placement="right" title="View"><i class="fas fa-eye"></i></a></li>
+                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="Compare"><i class="fas fa-sync-alt"></i></a></li>
+                                    <li><a class="add-wishlist" data-id="${pro.id}" data-image="${pro.image}"  data-title="${pro.title}" data-price="${pro.price}" data-toggle="tooltip" data-placement="right" title="Add to Wishlist"><i class="far fa-heart" style="pointer-events:none;"></i></a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-6 col-lg-8 col-xl-8">
+                    <div class="why-text full-width">
+                        <h4>${pro.title}</h4>
+                        <h5>$${pro.price}</h5>
+                        <p>${pro.description}</p>
+                        <a class="btn hvr-hover cart" data-id="${pro.id}" data-image="${pro.image}"  data-title="${pro.title}" data-price="${pro.price}">Add to Cart</a>
+                    </div>
+                </div>
+            </div>
+        </div>`;
+            product_container.innerHTML+=div;
+            document.querySelector('#list-view').innerHTML+=div2;
+        });
+        $('#product-container').fadeIn(500);
+        add_wishlist_event();
+        add_cart_event();
+    }
+
+
+    $('#pagination-demo').twbsPagination({
+        totalPages: maxPage,
+        visiblePages: 2,
+        startPage:curr_page,
+        onPageClick: function (event, page) {
+            const href = window.location.href;
+            const path  = href.replace(window.location.host,window.location.host+'/api');
+            let url = '';
+            if(!path.includes('?')){
+                url = path+`?page=${page}`;
+            }
+            else if(!path.includes('page')){
+                url = path+`&page=${page}`;
+            }
+            else{
+                url=path.replace(/page=[0-9]+/,`page=${page}`);
+            }
+            $("HTML, BODY").animate({ scrollTop: $("#product-container").offset().top-100 }, 1000);
+
+            product_container.innerHTML=`<div id="loader" style="">
+                                                <div class="clock-loader"></div>
+                                        </div>`;
+            if(!page_cache[page]){
+                $.get(url,(data,status)=>{
+                    if(status==='success'){
+                        updateView(data);
+                        history.pushState('','',url.replace('api/',''));
+                        page_cache[page] = data;
+                    }
+                    else{
+                        console.log('error',data);
+                    }
+                })
+            }
+            else{
+                updateView(page_cache[page])
+                history.pushState('','',url.replace('api/',''));
+            }
+            curr_page = page;
+        }
+    })
+
+    // Handle left bar
+    const max_cost = Math.round({{{max_cost}}});
+    (function($) {
+        "use strict";
+        $(function() {
+            $("#slider-range").slider({
+                range: true,
+                min: 0,
+                max: max_cost,
+                values: [Math.round(max_cost-max_cost*0.75), Math.round(max_cost-max_cost*0.25)],
+                slide: function(event, ui) {
+                    $("#amount").val("$" + ui.values[0] + " - $" + ui.values[1]);
+                }
+            });
+            $("#amount").val("$" + $("#slider-range").slider("values", 0) +
+                " - $" + $("#slider-range").slider("values", 1));
+        });
+    }(jQuery));
+    const leftbar_filter = {
+        q:'',
+        priceLow:0,
+        priceHigh:max_cost,
+        brand:[]
+    }
+
+    const inp_search = document.getElementById('inp-search');
+    const btn_search = document.getElementById('btn-search');
+    btn_search.addEventListener('click', (e) => {
+        e.preventDefault();
+        let q = inp_search.value;
+        if(!q){
+            q=''
+        }
+        const data = page_cache[curr_page];
+        leftbar_filter.q=q;
+        updateView(data);
+    })
+    inp_search.addEventListener('change',e=>{
+        if(e.keyCode == 13){
+            btn_search.click();
+        }
+    })
+    const btn_price_filter = document.querySelector('#btn-price-filter');
+    const amount = document.querySelector('#amount');
+
+    btn_price_filter.addEventListener('click',(e)=>{
+        const price_range = amount.value;
+        leftbar_filter.priceLow  = parseInt(price_range.split('-')[0].slice(1));
+        leftbar_filter.priceHigh  = parseInt(price_range.split('-')[1].slice(2));
+        const data = page_cache[curr_page];
+        updateView(data);
+    })
+
+    const brand_select = document.querySelectorAll('#brand-select input');
+    brand_select.forEach(inp=>{
+        inp.addEventListener('click',(e)=>{
+            if(inp.checked){
+                leftbar_filter.brand.push(inp.value);
+            }
+            else{
+                leftbar_filter.brand = leftbar_filter.brand.filter(b=>b!=inp.value);
+            }
+            const data = page_cache[curr_page];
+            updateView(data);
+        })
+    })
+    function filter(data){
+        let res = data.filter(d=>d.title.toLowerCase().includes(leftbar_filter.q.toLowerCase())
+                                        &&parseFloat(d.price)>=leftbar_filter.priceLow
+                                        &&parseFloat(d.price)<=leftbar_filter.priceHigh
+                                        &&(leftbar_filter.brand.length===0||leftbar_filter.brand.includes(d.brand)));
+        return res;
+    }
+
+
+
+    // sort
+    const filter_select = document.querySelector('#basicfilter');
+    filter_select.addEventListener('change', (e) => {
+        const sort = e.target.value;
+        const path = '/api' + window.location.pathname + `?sort_by=${sort}&page=${curr_page}`;
+        product_container.innerHTML=`<div id="loader" style="">
+                                                <div class="clock-loader"></div>
+                                        </div>`;
+        $.get(path,(data,status)=>{
+            if(status==="success"){
+                updateView(data);
+                history.pushState('','',path.replace('/api',''));
+                page_cache[curr_page] = data;
+            }
+        })
+    })
+
+
+</script>
+{{/section}}

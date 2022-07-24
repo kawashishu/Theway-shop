@@ -1,0 +1,127 @@
+{{#section 'style'}}
+<style>
+
+</style>
+{{/section}}
+<!-- Start Cart  -->
+<div class="cart-box-main">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+
+                <div class="table-main table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Images</th>
+                                <th>Product Name</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cart-container">
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td>
+                                    <div id="loader" style="">
+                                        <div class="clock-loader"></div>
+                                    </div>
+                                </td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!-- End Cart -->
+    {{#section 'script'}}
+    <script>
+        const cart_container = document.querySelector('#cart-container');
+        const order_summary = document.querySelector('#order-summary');
+
+        $('document').ready(() => {
+            let cart;
+            if (user_id) {
+                cart = window.localStorage.user_cart;
+            }
+            else {
+                cart = window.localStorage.cart;
+            }
+            cart = JSON.parse(cart);
+            updateView(cart);
+        })
+
+
+
+
+        function updateView(data) {
+            cart_container.innerHTML = '';
+            let total = 0;
+            data.forEach(cart => {
+                const tr = `<tr>
+                            <td class="thumbnail-img">
+                                <a href="/product/${cart.id}">
+                            <img class="img-fluid" src="${cart.image}" alt="" />
+                        </a>
+                            </td>
+                            <td class="name-pr">
+                                <a href="/product/${cart.id}">
+                            ${cart.title}
+                        </a>
+                            </td>
+                            <td class="price-pr">
+                                <p>$ ${cart.price}</p>
+                            </td>
+                            <td class="quantity-box"><input type="number" size="4" value="${cart.quantity}" min="0" step="1" class="c-input-text qty text" data-id="${cart.id}"></td>
+                            <td class="total-pr">
+                                <p>$ ${Math.round(cart.price * cart.quantity * 100) / 100}</p>
+                            </td>
+                            <td class="remove-pr">
+                                <a href="/myaccount/status" class="btn btn-secondary btn-lg active" data-id=${cart.id} role="button" aria-pressed="true">View</a>
+                            </td>
+                            
+                        </tr>`;
+                cart_container.innerHTML += tr;
+            })
+            total = Math.round(total * 100) / 100;
+            let tax = Math.round(total * 100 * 0.02) / 100;
+            let granTotal = Math.round((total + tax) * 100) / 100;
+            const orderSummaaryHTML = `<h3>Order summary</h3>
+                    <div class="d-flex">
+                        <h4>Sub Total</h4>
+                        <div class="ml-auto font-weight-bold"> $ ${total} </div>
+                    </div>
+                    <div class="d-flex">
+                        <h4>Discount</h4>
+                        <div class="ml-auto font-weight-bold"> $ 0 </div>
+                    </div>
+                    <hr class="my-1">
+                    <div class="d-flex">
+                        <h4>Coupon Discount</h4>
+                        <div class="ml-auto font-weight-bold"> $ 0 </div>
+                    </div>
+                    <div class="d-flex">
+                        <h4>Tax(2%)</h4>
+                        <div class="ml-auto font-weight-bold"> $ ${tax} </div>
+                    </div>
+                    <div class="d-flex">
+                        <h4>Shipping Cost</h4>
+                        <div class="ml-auto font-weight-bold"> Free </div>
+                    </div>
+                    <hr>
+                    <div class="d-flex gr-total">
+                        <h5>Grand Total</h5>
+                        <div class="ml-auto h5"> $ ${granTotal} </div>
+                    </div>
+                    <hr> `;
+            document.querySelector('#order-summary').innerHTML = orderSummaaryHTML;
+        }
+    </script>
+    {{/section}}

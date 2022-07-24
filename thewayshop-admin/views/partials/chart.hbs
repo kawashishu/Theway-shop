@@ -1,0 +1,28 @@
+<div class="row mt">
+    <!--CUSTOM CHART START -->
+    <div class="border-head">
+        <button id="btn-visit" class="btn btn-outline-secondary active">VISITS</button>
+        <button id="btn-sold" class="btn btn-outline-secondary">SOLD</button>
+        <button id="btn-income" class="btn btn-outline-secondary">INCOME</button>
+    </div>
+    <div id="visit-chart" class="custom-bar-chart">
+        <ul class="y-axis">
+            {{#each y_axis}}
+            <li><span>{{this}}</span></li>
+            {{/each}}
+        </ul>
+        {{#each bar}}
+        <div class="bar">
+            <div class="title">{{this.month}}</div>
+            <div class="value tooltips" data-original-title="{{this.value}}" data-toggle="tooltip" data-placement="top">{{this.percent}}%</div>
+        </div>
+        {{/each}}`
+    </div>
+    <!--custom chart end-->
+    <div id="sold-chart" class="text-center" style="display: none;">
+        <canvas id="radar-chart" width="350" height="350"></canvas>
+    </div>
+    <div id="income-chart" class="text-center" style="display: none;">
+        <canvas id="line-chart" width="500" height="350"></canvas>
+    </div>
+</div><!-- /row -->

@@ -1,0 +1,212 @@
+{{#section 'style'}}
+<style>
+  .dropbtn {
+    background-color: #58257b;
+    color: white;
+    font-weight: bold;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+  }
+
+
+  .dropdown {
+    position: relative;
+    display: inline-block;
+
+  }
+
+
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #e9d8f4;
+    width: 100%;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+  }
+
+
+  .dropdown-content a {
+    color: black;
+    padding: 20px 50px;
+    text-decoration: none;
+    display: block;
+  }
+
+
+  .dropdown-content a:hover {
+    background-color: #58257b;
+    color: white;
+  }
+
+  .dropdown:hover .dropdown-content {
+    display: contents;
+  }
+
+
+  .dropdown:hover .dropbtn {
+    background-color: #984eca;
+  }
+</style>
+{{/section}}
+<section id="main-content">
+  <section class="wrapper">
+    <div class="row">
+      <div class="col-lg-9 main-chart">
+        {{>stat}}
+        {{>chart}}
+      </div>
+      {{>member}}
+    </div><!-- /col-lg-9 END SECTION MIDDLE -->
+    
+    <h3> TOP PRODUCT</h3>
+    <div class="dropdown">
+      <a class="dropdown">
+        <i class="fa fa-database"></i>
+        <span class="tag-now" data-tagid="{{tagNow}}"> {{tagNow}}</span>
+      </a>
+      <div class="dropdown-content">
+        <button id="all-tag" class="btn-tag" data-tagid="-1">All</button>
+        {{#each tag}}
+        <button class="btn-tag" data-tagid="{{this.id}}">{{this.name}}</button>
+        {{/each}}
+      </div>
+    </div>
+
+  </section>
+  <section class="wrapper">
+    <div class="token" id="list_content">
+      {{>products}}
+    </div>
+  </section>
+</section>
+
+<!--main content end-->
+<!--footer start-->
+<footer class="site-footer">
+  <div class="text-center">
+    2021-WeBu
+    <a href="index.html#" class="go-top">
+      <i class="fa fa-angle-up"></i>
+    </a>
+  </div>
+</footer>
+{{#section 'script'}}
+<script>
+  const tag_btns = document.querySelectorAll(".btn-tag");
+  const tagNow = document.querySelector('.tag-now');
+  const token = document.querySelector('.token');
+
+  tag_btns.forEach(
+    (btn) => {
+      const tagId = btn.dataset.tagid;
+
+      btn.addEventListener('click', () => {
+        $.get(`/api/dashboard/topsellingproduct?id=${tagId}`, (data, status) => {
+          if (status === "success") {
+            if (tagId != -1)
+              tagNow.innerHTML = `<span class="tag-now" data-tagid = "{{tagNow}}"> ${data[0].name}</span>`
+            else
+              tagNow.innerHTML = `<span class="tag-now" data-tagid = "{{tagNow}}"> All</span>`
+
+            let htmlToken = ``;
+
+            data.forEach((element) => {
+              htmlToken = htmlToken + `<a href="/product/${element.id}">
+                                        <div class="col-md-3 col-sm-3 mb">
+                                            <div class="white-panel pn">
+                                                <div class="white-header">
+                                                    <h5>${element.title}</h5>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-sm-6 col-xs-6 goleft">
+                                                        <p>$ ${element.price}</p>
+                                                    </div>
+                                                    <div class="col-sm-6 col-xs-6"></div>
+                                                </div>
+                                                <div class="centered">
+                                                        <img src="${element.image}" height="120">
+                                                </div>
+                                            </div>
+                                        </div><!-- /col-md-4 -->
+                                    </a>`
+            })
+
+            token.innerHTML = htmlToken;
+          }
+
+        })
+      })
+
+    })
+  document.querySelector('#all-tag').click();
+  // chart 
+  const mon = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  const btn_visit = document.querySelector('#btn-visit');
+  const btn_sold = document.querySelector('#btn-sold');
+  const btn_income = document.querySelector('#btn-income');
+  const visit_chart = document.querySelector('#visit-chart');
+  const sold_chart = document.querySelector('#sold-chart');
+  const income_chart = document.querySelector('#income-chart');
+
+  btn_visit.addEventListener('click',()=>{
+    btn_visit.classList.add('active');
+    btn_sold.classList.remove('active');
+    btn_income.classList.remove('active');
+    visit_chart.style.display = 'block';
+    sold_chart.style.display = 'none';
+    income_chart.style.display = 'none';
+  })
+  btn_sold.addEventListener('click',()=>{
+    btn_sold.classList.add('active');
+    btn_visit.classList.remove('active');
+    btn_income.classList.remove('active');
+    sold_chart.style.display = 'block';
+    visit_chart.style.display = 'none';
+    income_chart.style.display = 'none';
+  })
+  btn_income.addEventListener('click',()=>{
+    btn_income.classList.add('active');
+    btn_visit.classList.remove('active');
+    btn_sold.classList.remove('active');
+    income_chart.style.display = 'block';
+    visit_chart.style.display = 'none';
+    sold_chart.style.display = 'none';
+  })
+
+  const getLabel = [{{{label}}}];
+  const getData = [{{{data}}}];
+  const data = {
+    labels: getLabel,
+    datasets: [{
+      label: 'My First Dataset',
+      data: getData,
+      fill:true,
+      fillColor : "rgba(0,20,220,0.5)",
+      strokeColor : "rgba(0,20,220,1)",
+      pointColor : "rgba(0,20,220,1)",
+      pointStrokeColor : "#fff",
+    }]
+  };
+  new Chart(document.querySelector('#radar-chart').getContext('2d')).Radar(data);
+
+  const get_month_income = '{{{month_income}}}';
+  const month_income_data = JSON.parse(get_month_income)
+  console.log(month_income_data.map(a=>mon[a.month-1]),month_income_data.map(a=>a.sum));
+  const line_data = {
+    labels: month_income_data.map(a=>mon[a.month-1]+`-${a.year}`),
+    datasets: [{
+      label: 'My First Dataset',
+      data: month_income_data.map(a=>parseFloat(a.sum)),
+      fill:true,
+      fillColor : "rgba(104,223,240,0.5)",
+      strokeColor : "rgba(104,223,240,1)",
+      pointColor : "rgba(104,223,240,1)",
+      pointStrokeColor : "#fff",
+    }]
+  };
+  new Chart(document.querySelector('#line-chart').getContext('2d')).Line(line_data);
+</script>
+{{/section}}

@@ -1,0 +1,28 @@
+
+{{#each products}}
+<a href="/product/{{this.id}}">
+    <div class="col-md-3 col-sm-3 mb">
+        <div class="white-panel pn">
+            <div class="white-header">
+                <h5>{{this.title}}</h5>
+            </div>
+            <div class="row">
+                <div class="col-sm-4 col-xs-4">
+                    <p>$ {{this.price}}</p>
+                </div>
+                <div class="col-sm-4 col-xs-4">
+                    <p>{{this.available}} avai</p>
+                </div>
+                <div class="col-sm-4 col-xs-4">
+                    <p>{{this.sold}} sold</p>
+                </div>
+            </div>
+            <div class="centered">
+                    <img src="{{this.image}}" height="120">
+            </div>
+        </div>
+    </div><!-- /col-md-4 -->
+</a>
+{{/each}}
+
+

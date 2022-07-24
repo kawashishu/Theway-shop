@@ -1,0 +1,90 @@
+<!-- Start Products  -->
+<div class="products-box justify-content-center">
+    <div class="container">
+        <div class="row" id="search-product">
+    
+        </div>
+        <div class="row justify-content-center">
+            <ul id="pagination-demo" class="pagination-sm"></ul>
+        </div>
+    </div>
+</div>
+<!-- End Products  -->
+{{#section 'script'}}
+<script>
+    const page_cache=[];
+    const maxPage={{{max_page}}}
+    let curr_page={{{page}}}
+    $('#pagination-demo').twbsPagination({
+        totalPages: maxPage,
+        visiblePages: 2,
+        startPage:curr_page,
+        onPageClick: function (event, page) {
+            const href  = window.location.href;
+            const path  = href.replace(window.location.host,window.location.host+'/api/product');
+            let url = '';
+            if(!path.includes('?')){
+                url = path+`?page=${page}`;
+            }
+            else if(!path.includes('page')){
+                url = path+`&page=${page}`;
+            }
+            else{
+                url=path.replace(/page=[0-9]+/,`page=${page}`);
+            }
+            $("HTML, BODY").animate({ scrollTop: $("#search-product").offset().top-100 }, 1000);
+            if(!page_cache[page]){
+                $.get(url,(data,status)=>{
+                    if(status==='success'){
+                        updateView(data);
+                        history.pushState('','',url.replace('api/product/',''));
+                        page_cache[page] = data;
+                    }
+                    else{
+                        console.log('error',data);
+                    }
+                })
+            }
+            else{
+                updateView(page_cache[page])
+                history.pushState('','',url.replace('api/product/',''));
+            }
+            curr_page = page;
+        }
+    }) 
+    const search_product = document.querySelector('#search-product');
+    function updateView(data){
+        search_product.innerHTML='';
+        data.forEach(pro=>{
+            const div = `<div class="col-lg-3 col-md-6 special-grid best-seller">
+                <div class="products-single fix">
+                    <div class="box-img-hover">
+                        <div class="type-lb">
+                            <p class="${pro.state}">${pro.state}</p>
+                        </div>
+                        <img src="${pro.image}" class="img-fluid" alt="Image" style="object-fit: scale-down;" height="330">
+                        <div class="mask-icon">
+                            <ul>
+                                <li><a href="/product/${pro.id}" data-toggle="tooltip" data-placement="right" title="View"><i
+                                            class="fas fa-eye"></i></a></li>
+                                <li><a href="#"  data-toggle="tooltip" data-placement="right" title="Compare"><i
+                                            class="fas fa-sync-alt"></i></a></li>
+                                <li><a class="add-wishlist" data-id="${pro.id}" data-image="${pro.image}"  data-title="${pro.title}" data-price="${pro.price}" data-toggle="tooltip" data-placement="right" title="Add to Wishlist"><i
+                                            class="far fa-heart" style="pointer-events: none;"></i></a></li>
+                            </ul>
+                            <a class="cart" data-id="${pro.id}" data-image="${pro.image}"  data-title="${pro.title}" data-price="${pro.price}">Add to Cart</a>
+                        </div>
+                    </div>
+                    <div class="why-text">
+                        <h4>${pro.title}</h4>
+                        <h5> $${pro.price}</h5>
+                    </div>
+                </div>
+            </div>`;
+            search_product.innerHTML+=div;
+        })
+        add_wishlist_event();
+        add_cart_event();
+    }
+</script>
+{{/section}}

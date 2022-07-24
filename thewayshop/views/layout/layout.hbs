@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- Basic -->
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <!-- Mobile Metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Site Metas -->
+    <title>{{title}}</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <script>
+        // Start : Google Analytics Code
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments);
+            }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m);
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+        ga('create', 'UA-215838150-1', 'auto');
+        ga('send', 'pageview');
+    // Start : Google Analytics Code
+    </script>
+    <!-- Site Icons -->
+    <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+
+    <link rel="stylesheet" href="/css/login.css">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <!-- Site CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- Responsive CSS -->
+    <link rel="stylesheet" href="/css/responsive.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/custom.css">
+
+    {{{_sections.style}}}
+
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <style>
+        .add-wishlist {
+            color: white !important;
+            cursor: pointer;
+        }
+
+        .cart {
+            cursor: pointer;
+            color: white !important;
+        }
+
+        #loader {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-width: 100%;
+            margin: 0;
+            background: rgb(255, 255, 255);
+        }
+
+        .clock-loader {
+            --clock-color: #466ef3;
+            --clock-width: 4rem;
+            --clock-radius: calc(var(--clock-width) / 2);
+            --clock-minute-length: calc(var(--clock-width) * 0.4);
+            --clock-hour-length: calc(var(--clock-width) * 0.2);
+            --clock-thickness: 0.2rem;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: var(--clock-width);
+            height: var(--clock-width);
+            border: 3px solid var(--clock-color);
+            border-radius: 50%;
+        }
+
+        .clock-loader::before,
+        .clock-loader::after {
+            position: absolute;
+            content: "";
+            top: calc(var(--clock-radius) * 0.25);
+            width: var(--clock-thickness);
+            background: var(--clock-color);
+            border-radius: 10px;
+            transform-origin: center calc(100% - calc(var(--clock-thickness) / 2));
+            animation: spin infinite linear;
+        }
+
+        .clock-loader::before {
+            height: var(--clock-minute-length);
+            animation-duration: 2s;
+        }
+
+        .clock-loader::after {
+            top: calc(var(--clock-radius) * 0.25 + var(--clock-hour-length));
+            height: var(--clock-hour-length);
+            animation-duration: 15s;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(1turn);
+            }
+        }
+
+        body {
+            color: #000;
+            overflow-x: hidden;
+            height: 100%;
+            background-repeat: no-repeat
+        }
+
+        .card {
+            z-index: 0;
+            background-color: #ECEFF1;
+            padding-bottom: 20px;
+            margin-top: 90px;
+            margin-bottom: 90px;
+            border-radius: 10px
+        }
+
+        
+
+        #progressbar {
+            margin-bottom: 30px;
+            overflow: hidden;
+            color: #455A64;
+            padding-left: 0px;
+            margin-top: 30px
+        }
+
+        #progressbar li {
+            list-style-type: none;
+            font-size: 13px;
+            width: 25%;
+            float: left;
+            position: relative;
+            font-weight: 400
+        }
+
+        #progressbar .step0:before {
+            font-family: FontAwesome;
+            content: "\f10c";
+            color: #fff
+        }
+
+        #progressbar li:before {
+            width: 40px;
+            height: 40px;
+            line-height: 45px;
+            display: block;
+            font-size: 20px;
+            background: #C5CAE9;
+            border-radius: 50%;
+            margin: auto;
+            padding: 0px
+        }
+
+        #progressbar li:after {
+            content: '';
+            width: 100%;
+            height: 12px;
+            background: #C5CAE9;
+            position: absolute;
+            left: 0;
+            top: 16px;
+            z-index: -1
+        }
+
+        #progressbar li:last-child:after {
+            border-top-right-radius: 10px;
+            border-bottom-right-radius: 10px;
+            position: absolute;
+            left: -50%
+        }
+
+        #progressbar li:nth-child(2):after,
+        #progressbar li:nth-child(3):after {
+            left: -50%
+        }
+
+        #progressbar li:first-child:after {
+            border-top-left-radius: 10px;
+            border-bottom-left-radius: 10px;
+            position: absolute;
+            left: 50%
+        }
+
+        #progressbar li:last-child:after {
+            border-top-right-radius: 10px;
+            border-bottom-right-radius: 10px
+        }
+
+        #progressbar li:first-child:after {
+            border-top-left-radius: 10px;
+            border-bottom-left-radius: 10px
+        }
+
+        #progressbar li.active:before,
+        #progressbar li.active:after {
+            background: #651FFF
+        }
+
+        #progressbar li.active:before {
+            font-family: FontAwesome;
+            content: "\f00c"
+        }
+
+        .icon {
+            width: 60px;
+            height: 60px;
+            margin-right: 15px
+        }
+
+        .icon-content {
+            padding-bottom: 20px
+        }
+
+        #advandce-form select{
+            color: #dadada;
+            background-color: black;
+        }
+        #advandce-form label{
+            color: #dadada;
+        }
+        #advandce-form .form-control{
+            background-color: #000;
+        }
+        @media screen and (max-width: 992px) {
+            .icon-content {
+                width: 50%
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Start Main Top -->
+    <div class="main-top">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    <div class="text-slid-box">
+                        <div id="offer-box" class="carouselTicker">
+                            <ul class="offer-box">
+                                {{#each coupons}}
+                                <li>
+                                    <i class="fab fa-opencart"></i> {{this}}
+                                </li>
+                                {{/each}}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    <div class="custom-select-box">
+                        <select id="basic" class="selectpicker show-tick form-control" data-placeholder="$ USD">
+                            <option>¥ JPY</option>
+                            <option>$ USD</option>
+                            <option>€ EUR</option>
+                        </select>
+                    </div>
+                    <div class="right-phone-box">
+                        <p>Call US :- <a href="/shop/contactus"> +11 900 800 100</a></p>
+                    </div>
+                    <div class="our-link">
+                        <ul>
+                            {{#if user}}
+                            <li><a href="/myaccount/profile">Wellcome, {{user.name}}</a></li>
+                            <li><a href="/logout">Sign out</a></li>
+                            {{else}}
+                            <li><a href="/login">Sign in</a></li>
+                            {{/if}}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Main Top -->
+
+
+    <!-- Start Main Top -->
+    <header class="main-header">
+        <!-- Start Navigation -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light navbar-default bootsnav">
+            <div class="container">
+                <!-- Start Header Navigation -->
+                <div class="navbar-header">
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-menu"
+                        aria-controls="navbars-rs-food" aria-expanded="false" aria-label="Toggle navigation">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                    <a class="navbar-brand" href="/"><img src="/images/logo.png" class="logo" alt=""></a>
+                </div>
+                <!-- End Header Navigation -->
+
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse" id="navbar-menu">
+                    <ul class="nav navbar-nav ml-auto" data-in="fadeInDown" data-out="fadeOutUp">
+                        <li class="nav-item active"><a class="nav-link" href="/">Home</a></li>
+                        <li class="dropdown megamenu-fw">
+                            <a href="/product" class="nav-link dropdown-toggle arrow">Product</a>
+                            <ul class="dropdown-menu megamenu-content" role="menu">
+                                <li>
+                                    <div class="row">
+                                        {{#each categories}}
+                                        <div class="col-menu col-md-3">
+                                            <h6 class="title">{{this.name}}</h6>
+                                            <div class="content">
+                                                <ul class="menu-col">
+                                                    {{#each this.tags}}
+                                                    <li><a href="/product/tag/{{this.name}}">{{this.name}}</a></li>
+                                                    {{/each}}
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        {{/each}}
+                                        <!-- end col-3 -->
+                                    </div>
+                                    <!-- end row -->
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="nav-link dropdown-toggle arrow" data-toggle="dropdown">SHOP</a>
+                            <ul class="dropdown-menu">
+                                <li><a href="/myaccount/cart">Cart</a></li>
+                                <li><a href="/myaccount/checkout">Checkout</a></li>
+                                <li><a href="/myaccount">My Account</a></li>
+                                <li><a href="/myaccount/wishlist">Wishlist</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" href="./shop/contactus">Contact Us</a></li>
+                    </ul>
+                </div>
+                <!-- /.navbar-collapse -->
+
+                <!-- Start Atribute Navigation -->
+                <div class="attr-nav">
+                    <ul>
+                        <li class="search"><a href="/"><i class="fa fa-search"></i></a></li>
+                        <li class="side-menu"><a href="#">
+                                <i class="fa fa-shopping-bag"></i>
+                                <span class="badge" id="cart-total-item">0</span>
+                            </a></li>
+                    </ul>
+                </div>
+                <!-- End Atribute Navigation -->
+            </div>
+            <!-- Start Side Menu -->
+            <div class="side">
+                <a href="#" class="close-side"><i class="fa fa-times"></i></a>
+                <li class="cart-box">
+                    <ul class="cart-list" id="cart-bar" style="max-height: 80vh;overflow-y: scroll;">
+                    </ul>
+                    <ul class="cart-list">
+                        <li class="total">
+                            <a href="/myaccount/cart" class="btn btn-default hvr-hover btn-cart">VIEW CART</a>
+                            <span class="float-right"><small><strong>Total</strong>: $<i
+                                        id="cart-total">00.00</i></small></span>
+                        </li>
+                    </ul>
+                </li>
+            </div>
+            <!-- End Side Menu -->
+        </nav>
+        <!-- End Navigation -->
+    </header>
+    <!-- End Main Top -->
+    <!-- Start Top Search -->
+    <div class="top-search">
+        <form action="/search" class="container">
+            <div class="input-group">
+                <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                <input type="text" name="q" class="form-control" placeholder="Search">
+                <span class="input-group-addon close-search"><i class="fa fa-times" ></i></span>
+                <span class="input-group-addon" style="margin-left:10px;cursor: pointer;"><i class="fa fa-chevron-circle-down" id="search-more" ></i></span>
+            </div>
+            <div class="input-group" id="advandce-form" style="display: none;">
+                <div class="form-control">
+                    <label for="tag">Choose tag:</label>
+                    <select name="tag" id="tag" class="form-control">
+                        <option value="" selected>All</option>
+                        {{#each tags}}
+                        <option value="{{this.name}}">{{this.name}}</option>
+                        {{/each}}
+                    </select>
+                </div>  
+                <div class="form-control">
+                    <label for="brand">Choose Brand:</label>
+                    <select name="brand" id="brand" class="form-control">
+                        <option value="" selected>All</option>
+                        {{#each brands}}
+                        <option value="{{this.brand}}">{{this.brand}}</option>
+                        {{/each}}
+                    </select>
+                </div>
+                <div class="price-box-slider form-control">
+                    <div id="slider-range-layout"></div>
+                    <p>
+                        <input type="text" id="amount-layout" name="price" readonly style="border:0; color:#fbb714; font-weight:bold;background:black;">
+                    </p>
+                </div>
+                <button class="btn hvr-hover" type="submit">Search</button>
+            </div>
+        </form>
+    </div>
+    <!-- End Top Search -->
+
+
+    {{{body}}}
+    <!-- Start Instagram Feed  -->
+    <div class="instagram-box">
+        <div class="main-instagram owl-carousel owl-theme">
+            <div class="item">
+                <div class="ins-inner-box">
+                    <img src="/images/instagram-img-01.jpg" alt="" />
+                    <div class="hov-in">
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="item">
+                <div class="ins-inner-box">
+                    <img src="/images/instagram-img-02.jpg" alt="" />
+                    <div class="hov-in">
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="item">
+                <div class="ins-inner-box">
+                    <img src="/images/instagram-img-03.jpg" alt="" />
+                    <div class="hov-in">
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="item">
+                <div class="ins-inner-box">
+                    <img src="/images/instagram-img-04.jpg" alt="" />
+                    <div class="hov-in">
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="item">
+                <div class="ins-inner-box">
+                    <img src="/images/instagram-img-05.jpg" alt="" />
+                    <div class="hov-in">
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="item">
+                <div class="ins-inner-box">
+                    <img src="/images/instagram-img-06.jpg" alt="" />
+                    <div class="hov-in">
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="item">
+                <div class="ins-inner-box">
+                    <img src="/images/instagram-img-07.jpg" alt="" />
+                    <div class="hov-in">
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="item">
+                <div class="ins-inner-box">
+                    <img src="/images/instagram-img-08.jpg" alt="" />
+                    <div class="hov-in">
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="item">
+                <div class="ins-inner-box">
+                    <img src="/images/instagram-img-09.jpg" alt="" />
+                    <div class="hov-in">
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="item">
+                <div class="ins-inner-box">
+                    <img src="/images/instagram-img-05.jpg" alt="" />
+                    <div class="hov-in">
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Instagram Feed  -->
+    <!-- Start Footer  -->
+    <footer>
+        <div class="footer-main">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-4 col-md-12 col-sm-12">
+                        <div class="footer-widget">
+                            <h4>About ThewayShop</h4>
+                            <p>Bạn ko có tiền mua đồ xịn, hãy đến với Thewayshop :v
+                            </p>
+                            <ul>
+                                <li><a href="#"><i class="fab fa-facebook" aria-hidden="true"></i></a></li>
+                                <li><a href="#"><i class="fab fa-twitter" aria-hidden="true"></i></a></li>
+                                <li><a href="#"><i class="fab fa-linkedin" aria-hidden="true"></i></a></li>
+                                <li><a href="#"><i class="fab fa-google-plus" aria-hidden="true"></i></a></li>
+                                <li><a href="#"><i class="fa fa-rss" aria-hidden="true"></i></a></li>
+                                <li><a href="#"><i class="fab fa-pinterest-p" aria-hidden="true"></i></a></li>
+                                <li><a href="#"><i class="fab fa-whatsapp" aria-hidden="true"></i></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-12 col-sm-12">
+                        <div class="footer-link">
+                            <h4>Information</h4>
+                            <ul>
+                                <li><a href="#">About Us</a></li>
+                                <li><a href="#">Customer Service</a></li>
+                                <li><a href="#">Our Sitemap</a></li>
+                                <li><a href="#">Terms &amp; Conditions</a></li>
+                                <li><a href="#">Privacy Policy</a></li>
+                                <li><a href="#">Delivery Information</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-12 col-sm-12">
+                        <div class="footer-link-contact">
+                            <h4>Contact Us</h4>
+                            <ul>
+                                <li>
+                                    <p><i class="fas fa-map-marker-alt"></i>Đại học Khoa học Tự nhiên</p>
+                                </li>
+                                <li>
+                                    <p><i class="fas fa-phone-square"></i>Phone: <a href="tel:+1-888705770">113</a></p>
+                                </li>
+                                <li>
+                                    <p><i class="fas fa-envelope"></i>Email: <a
+                                            href="mailto:contactinfo@gmail.com">contactinfo@gmail.com</a></p>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- End Footer  -->
+
+
+    <a href="#" id="back-to-top" title="Back to top" style="display: none;">&uarr;</a>
+
+    <!-- ALL JS FILES -->
+    <script src="/js/jquery-3.2.1.min.js"></script>
+    <script src="/js/jquery.twbsPagination.js"></script>
+    <script src="/js/jquery-ui.js"></script>
+    <script src="/js/jquery.nicescroll.min.js"></script>
+    <script src="/js/popper.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <!-- ALL PLUGINS -->
+    <script src="/js/jquery.superslides.min.js"></script>
+    <script src="/js/bootstrap-select.js"></script>
+    <script src="/js/inewsticker.js"></script>
+    <script src="/js/bootsnav.js"></script>
+    <script src="/js/images-loded.min.js"></script>
+    <script src="/js/isotope.min.js"></script>
+    <script src="/js/owl.carousel.min.js"></script>
+    <script src="/js/baguetteBox.min.js"></script>
+    <script src="/js/form-validator.min.js"></script>
+    <script src="/js/contact-form-script.js"></script>
+    <script src="/js/custom.js"></script>
+    
+    <script>
+        const user_id = '{{{user.id}}}';
+        if (user_id) {
+            $.get(`/api/account/${user_id}/wishlist`, (data, status) => {
+                if (status === 'success') {
+                    const wishList = window.localStorage.getItem('wishList');
+                    if (wishList && wishList.length > 2) {
+                        const list_item = JSON.parse(wishList);
+                        list_item.forEach(item => {
+                            if (!data.some(i => i.id === item.id)) {
+                                $.post('/api/account/wishlist', {
+                                    user_id: user_id,
+                                    pro_id: item.id
+                                }, (d, status) => {
+                                    if (status === 'success') {
+                                        data.push(item);
+                                    }
+                                })
+                            }
+                        })
+                    }
+                    window.localStorage.setItem('wishList', '[]');
+                    window.localStorage.setItem('user_wishlist', JSON.stringify(data));
+                }
+            })
+            $.get(`/api/account/${user_id}/cart`, (data, status) => {
+                if (status === 'success') {
+                    const cart = window.localStorage.getItem('cart');
+                    if (cart && cart.length > 2) {
+                        const list_item = JSON.parse(cart);
+                        list_item.forEach(item => {
+                            if (!data.some(i => i.id === item.id)) {
+                                $.post('/api/account/cart', {
+                                    user_id: user_id,
+                                    pro_id: item.id,
+                                    quantity: item.quantity
+                                }, (d, status) => {
+                                    if (status === 'success') {
+                                        data.push(item);
+                                    }
+                                })
+                            }
+                        })
+                    }
+                    window.localStorage.setItem('cart', '[]');
+                    window.localStorage.setItem('user_cart', JSON.stringify(data));
+                    updateCartBar();
+                }
+            })
+
+        }
+        else {
+            window.localStorage.setItem('user_wishlist', '');
+            window.localStorage.setItem('user_cart', '');
+        }
+        function wishlistHandler(e) {
+            const obj = {
+                id: e.target.dataset.id,
+                image: e.target.dataset.image,
+                title: e.target.dataset.title,
+                price: e.target.dataset.price
+            }
+            if (user_id) {
+                $.post('/api/account/wishlist', {
+                    user_id: user_id,
+                    pro_id: e.target.dataset.id
+                }, (data, status) => {
+                    if (status === 'success') {
+                        console.log('success');
+                        let wishlist = window.localStorage.getItem('user_wishlist');
+                        if (wishlist) {
+                            wishlist = JSON.parse(wishlist);
+                            if (wishlist.some(e => e.id === obj.id)) {
+                                wishlist = wishlist.filter(e => e.id != obj.id);
+                            }
+                            else {
+                                wishlist.push(obj)
+                            }
+                        }
+                        else {
+                            wishlist = [obj];
+                        }
+                        window.localStorage.setItem('user_wishlist', JSON.stringify(wishlist));
+                    }
+                    else {
+                        console.log(data);
+                    }
+                })
+            }
+            else {
+
+                let wishlist = window.localStorage.getItem('wishList');
+                if (wishlist) {
+                    wishlist = JSON.parse(wishlist);
+                    if (wishlist.some(e => e.id === obj.id)) {
+                        wishlist = wishlist.filter(e => e.id != obj.id);
+                    }
+                    else {
+                        wishlist.push(obj)
+                    }
+                }
+                else {
+                    wishlist = [obj];
+                }
+                window.localStorage.setItem('wishList', JSON.stringify(wishlist));
+            }
+            const icon = e.target.querySelector('i');
+            if (icon.classList.contains('fas')) {
+                icon.classList.remove('fas');
+                if (icon.parentElement.textContent) {
+                    icon.parentElement.innerHTML = '<i class="far fa-heart" style="pointer-events: none;"></i> Add to wishlist'
+                }
+            }
+            else {
+                icon.classList.add('fas');
+                if (icon.parentElement.textContent) {
+                    icon.parentElement.innerHTML = '<i class="far fa-heart fas" style="pointer-events: none;"></i> Remove From Wishlist'
+                }
+            }
+        }
+        function add_wishlist_event() {
+            let wishList = window.localStorage.getItem('wishList');
+            if (wishList && wishList.length > 2) {
+
+            }
+            else {
+                wishList = window.localStorage.getItem('user_wishlist');
+            }
+            document.querySelectorAll('.add-wishlist').forEach(a => {
+                if (wishList.includes(a.dataset.id)) {
+                    a.querySelector('i').classList.add('fas');
+                    if (a.textContent) {
+                        a.innerHTML = '<i class="far fa-heart fas" style="pointer-events: none;"></i>Remove From Wishlist'
+                    }
+                }
+                a.addEventListener('click', wishlistHandler);
+            })
+        }
+
+        function cartHandler(e) {
+            const obj = {
+                id: e.target.dataset.id,
+                image: e.target.dataset.image,
+                title: e.target.dataset.title,
+                price: e.target.dataset.price,
+                quantity: 1
+            }
+            if (user_id) {
+                $.post('/api/account/cart', {
+                    user_id: user_id,
+                    pro_id: e.target.dataset.id,
+                    quantity: obj.quantity
+                }, (data, status) => {
+                    if (status === 'success') {
+                        console.log('success');
+                        let cart = window.localStorage.getItem('user_cart');
+                        if (cart) {
+                            cart = JSON.parse(cart);
+                            if (cart.some(e => e.id === obj.id)) {
+                                cart.filter(e => e.id === obj.id)[0].quantity++;
+                            }
+                            else {
+                                cart.push(obj)
+                            }
+                        }
+                        else {
+                            cart = [obj];
+                        }
+                        window.localStorage.setItem('user_cart', JSON.stringify(cart));
+                        updateCartBar();
+                    }
+                    else {
+                        console.log(data);
+                    }
+                })
+            }
+            else {
+
+                let cart = window.localStorage.getItem('cart');
+                if (cart) {
+                    cart = JSON.parse(cart);
+                    if (cart.some(e => e.id === obj.id)) {
+                        cart.filter(e => e.id === obj.id)[0].quantity++;
+                    }
+                    else {
+                        cart.push(obj)
+                    }
+                }
+                else {
+                    cart = [obj];
+                }
+                window.localStorage.setItem('cart', JSON.stringify(cart));
+            }
+            e.target.textContent = "Add one more";
+            updateCartBar();
+        }
+        function add_cart_event() {
+            let cart = window.localStorage.getItem('cart');
+            if (cart && cart.length > 2) {
+
+            }
+            else {
+                cart = window.localStorage.getItem('user_cart');
+            }
+            document.querySelectorAll('.cart').forEach(a => {
+                if (cart.includes(a.dataset.id)) {
+                    a.textContent = "Add one more"
+                }
+                a.addEventListener('click', cartHandler);
+            })
+        }
+        function updateCartBar() {
+            let cart = window.localStorage.getItem('cart');
+            if (cart && cart.length > 2) {
+
+            }
+            else {
+                cart = window.localStorage.getItem('user_cart');
+            }
+            if (!cart) {
+                return;
+            }
+            cart = JSON.parse(cart);
+            const cart_box = document.querySelector('#cart-bar')
+            cart_box.innerHTML = '';
+            let total = 0;
+            cart.forEach(item => {
+                const li = `<li>
+                            <a href="./product/${item.id}" class="photo"><img src="${item.image}" class="cart-thumb" alt="" /></a>
+                            <h6><a href="./product/${item.id}">${item.title} </a></h6>
+                            <p>${item.quantity}x - <span class="price">$${item.price}</span></p>
+                        </li>`;
+                total += Math.round(parseFloat(item.price) * parseInt(item.quantity) * 100, 2) / 100;
+                cart_box.innerHTML += li;
+            })
+            total = Math.round(total * 100) / 100;
+            document.querySelector('#cart-total').textContent = total;
+            document.querySelector('#cart-total-item').textContent = cart.length;
+        }
+        updateCartBar();
+
+        //
+        (function($) {
+            "use strict";
+            $(function() {
+                $("#slider-range-layout").slider({
+                    range: true,
+                    min: 0,
+                    max: 20000,
+                    values: [0, 20000],
+                    slide: function(event, ui) {
+                        $("#amount-layout").val("$" + ui.values[0] + " - $" + ui.values[1]);
+                    }
+                });
+                $("#amount-layout").val("$" + $("#slider-range-layout").slider("values", 0) +
+                    " - $" + $("#slider-range-layout").slider("values", 1));
+            });
+        }(jQuery));
+        $('#search-more').click(()=>{
+            $('#advandce-form').toggle("slow");
+        })
+    </script>
+    {{{_sections.script}}}
+    <!-- Messenger Plugin chat Code -->
+    <div id="fb-root"></div>
+
+    <!-- Your Plugin chat code -->
+    <div id="fb-customer-chat" class="fb-customerchat">
+    </div>
+
+    <script>
+      var chatbox = document.getElementById('fb-customer-chat');
+      chatbox.setAttribute("page_id", "100569799202511");
+      chatbox.setAttribute("attribution", "biz_inbox");
+    </script>
+
+    <!-- Your SDK code -->
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          xfbml            : true,
+          version          : 'v12.0'
+        });
+      };
+
+      (function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = 'https://connect.facebook.net/en_US/sdk/xfbml.customerchat.js';
+        fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'facebook-jssdk'));
+    </script>
+
+</body>
+
+</html>

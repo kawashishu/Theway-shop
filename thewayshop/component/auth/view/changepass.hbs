@@ -1,0 +1,90 @@
+{{#section 'style'}}
+<style>
+    #togglePassword,#toggleRPassword{
+        margin-left: -30px;
+        margin-top: 10px; 
+        cursor: pointer;
+        position: absolute;
+        right: 5%;
+        top: 50%;
+        color: rgb(46, 226, 211);
+    }
+</style>
+{{/section}}
+<div class="login-wrap">
+	<div class="login-html">
+        <input id="tab-1" type="radio" name="tab" class="sign-in" checked><label for="tab-1" class="tab">Change Password</label>
+		<input id="tab-2" type="radio" name="tab" class="sign-up"><label for="tab-2" class="tab"></label>
+        <div class="login-form">
+			<div  class="sign-in-htm">
+				<form method="post">
+					<div class="group" style="position: relative;">
+						<label for="pass" class="label">Password</label>
+						<input id="pass" type="password" class="input"  name="password" required autocomplete="off"><i class="far fa-eye" id="togglePassword" ></i>
+                        <span id="notipass" style="color: red;"></span>
+					</div>
+                    <div class="group" style="position: relative;">
+						<label for="repass" class="label">Confirm Password</label>
+						<input id="repass" type="password" class="input"name="repassword" required><i class="far fa-eye" id="toggleRPassword" ></i>
+                        <span id="noti" style="color: red;"></span>
+					</div>
+					<div class="group">
+						<input type="submit" class="button" id="btn-confirm"  value="Confirm">
+					</div>
+					<div class="hr"></div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+{{#section 'script'}}
+<script>
+    const pass = document.querySelector('#pass');
+    const repass = document.querySelector('#repass'); 
+    const noti = document.querySelector('#noti');
+    const btn_confirm = document.querySelector('#btn-confirm')
+    repass.addEventListener('keyup',()=>{
+        if(repass.value != pass.value){
+            repass.style.border ='1px solid red';
+            noti.textContent = "Doesn't match password";
+            btn_confirm.disabled = true;
+        }
+        else{
+            repass.style.border ='none';
+            noti.textContent = "";
+            btn_confirm.disabled = false;
+        }
+    })
+    const notipass = document.querySelector('#notipass');
+    pass.addEventListener('focusout',()=>{
+        const value = pass.value || '';
+        if(value.length<6 && value.length>0){
+            pass.style.border = '1px solid rgb(46, 226, 211)';
+            notipass.textContent = 'Password must at least 6 character';
+            pass.focus();
+        }
+        else{
+            pass.style.border = 'none';
+            notipass.textContent = '';
+        }
+    })
+
+    const toggleOPassword = document.querySelector('#togglePassword');
+    const toggleNPassword = document.querySelector('#toggleRPassword');
+
+    togglePassword.addEventListener('click', function (e) {
+        // toggle the type attribute
+        const type = pass.getAttribute('type') === 'password' ? 'text' : 'password';
+        pass.setAttribute('type', type);
+        // toggle the eye slash icon
+        this.classList.toggle('fa-eye-slash');
+    });
+    toggleRPassword.addEventListener('click', function (e) {
+        // toggle the type attribute
+        const type = repass.getAttribute('type') === 'password' ? 'text' : 'password';
+        repass.setAttribute('type', type);
+        // toggle the eye slash icon
+        this.classList.toggle('fa-eye-slash');
+    });
+</script>
+{{/section}}

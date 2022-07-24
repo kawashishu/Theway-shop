@@ -1,0 +1,108 @@
+<section id="main-content">
+    <section class="wrapper">
+        <div class="row">
+            <div class="col-md-6">
+                <h2>{{head}}</h2>
+            </div>
+            
+            <div class="col-md-3">
+                <button class="btn btn-info" style="margin-top:5px;"> 
+                    <a href="/product/add" style="color:#fcfcfc">Add new product</a>
+                </button>
+            </div>
+            <div class="col-md-3">
+                <form action="/product/search">
+                    <input type="text" class="form-control" placeholder="Search" aria-label="Search"  name="q" aria-describedby="basic-addon1">
+                </form>
+            </div>
+            
+        </div>
+        <div class="row" id="product-container">
+            {{>products}}
+        </div>
+        <div class="row" style="display: flex; justify-content:center;">
+            <ul id="pagination-demo" class="pagination-sm"></ul>
+        </div>
+    </section>
+</section>
+{{#section 'script'}}
+<script>
+    const page_cache=[];
+    const max_page ={{{max_page}}}
+    let curr_page = {{{page}}};
+    const product_container = document.querySelector('#product-container');
+
+    function updateView(data){
+        product_container.innerHTML=''
+        data.forEach((pro)=>{
+            const div = `<a href="/product/${pro.id}">
+                <div class="col-md-3 col-sm-3 mb">
+                    <div class="white-panel pn">
+                        <div class="white-header">
+                            <h5>${pro.title}</h5>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4 col-xs-4">
+                                <p>$ ${pro.price}</p>
+                            </div>
+                            <div class="col-sm-4 col-xs-4">
+                                <p>${pro.available} avai</p>
+                            </div>
+                            <div class="col-sm-4 col-xs-4">
+                                <p>${pro.sold} sold</p>
+                            </div>
+                        </div>
+                        <div class="centered">
+                                <img src="${pro.image}" height="120">
+                        </div>
+                    </div>
+                </div><!-- /col-md-4 -->
+            </a>`;
+            product_container.innerHTML+=div;
+        });
+        $('#product-container').fadeIn(500);
+        
+    }
+
+    $('#pagination-demo').twbsPagination({
+        totalPages: max_page,
+        visiblePages: 2,
+        startPage:curr_page,
+        onPageClick: function (event, page) {
+            const href = window.location.href;
+            const path  = href.replace(window.location.host,window.location.host+'/api');
+            let url = '';
+            if(!path.includes('?')){
+                url = path+`?page=${page}`;
+            }
+            else if(!path.includes('page')){
+                url = path+`&page=${page}`;
+            }
+            else{
+                url=path.replace(/page=[0-9]+/,`page=${page}`);
+            }
+            $("HTML, BODY").animate({ scrollTop: $("#product-container").offset().top-100 }, 1000);
+            $('#product-container').fadeOut(500);
+            setTimeout(()=>{
+                product_container.innerHTML=''
+                if(!page_cache[page]){
+                    $.get(url,(data,status)=>{
+                        if(status==='success'){
+                            updateView(data);
+                            history.pushState('','',url.replace('api/',''));
+                            page_cache[page] = data;
+                        }
+                        else{
+                            console.log('error',data);
+                        }
+                    })
+                }
+                else{
+                    updateView(page_cache[page])
+                    history.pushState('','',url.replace('api/',''));
+                }
+            },500)
+        }
+    })
+</script>
+{{/section}}

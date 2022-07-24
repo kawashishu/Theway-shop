@@ -1,0 +1,127 @@
+
+<section id="main-content">
+    <section class="wrapper">
+    <div class="row mt">
+        <div class="col-lg-12">
+                <div class="content-panel">
+                    <h4><i class="fa fa-angle-right"></i>{{table_name}}</h4>
+                    <section id="no-more-tables">
+                        <table class="table table-bordered table-striped table-condensed cf">
+                            <thead class="cf">
+                                <tr>
+                                    {{#each column_name}}
+                                    <th>{{this}}</th>
+                                    {{/each}}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each record}}
+                                    <tr id="tr-{{this.id}}"}>
+                                    {{#each this}}
+                                        {{#ifeq @key 'is_delete'}}
+                                        {{else}}
+                                        <td data-title="{{@key}}">{{this}}</td>
+                                        {{/ifeq}}
+                                    {{/each}}
+                                    {{#if this.id}}
+                                        {{#if this.is_delete}} 
+                                        <td><a href="/user/info?recordId={{this.id}}"><button>View Info</button> </a><button class="btn btn-primary btn-inline-block btn-unblock" style="background-color:#13222b;" data-id="{{this.id}}">UnBlock</button></td>
+                                        {{else}}
+                                        <td><a href="/user/info?recordId={{this.id}}"><button>View Info</button> </a><button class="btn btn-primary btn-inline-block btn-ablock"  data-id="{{this.id}}">Block</button></td>
+                                        {{/if}}
+                                    {{/if}}
+                                    </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </section>
+                </div><!-- /content-panel -->
+                <div class="row">
+                    <nav aria-label="...">
+                        <ul class="pagination">
+                            {{#if previous}}
+                            <li class="page-item ">
+                            <a class="page-link" href="/user?page={{previous}}">Previous</a>
+                            </li>
+                            {{else}}
+                            <li class="page-item disabled">
+                            <span class="page-link">Previous</span>
+                            </li>
+                            {{/if}}
+                            {{#each pages}}
+                            {{#ifeq this ../page}}
+                            <li class="page-item active">
+                            <span class="page-link">
+                                {{this}}
+                                <span class="sr-only">(current)</span>
+                            </span>
+                            </li>
+                            {{else}}
+                            <li class="page-item"><a class="page-link" href="/user?page={{this}}">{{this}}</a></li>
+                            {{/ifeq}}
+                            {{/each}}
+                            {{#if next}}
+                            <li class="page-item ">
+                            <a class="page-link" href="/user?page={{next}}">Next</a>
+                            </li>
+                            {{else}}
+                            <li class="page-item disabled">
+                            <span class="page-link">Next</span>
+                            </li>
+                            {{/if}}
+                        </ul>
+                    </nav>
+                </div>
+            </div><!-- /col-lg-12 -->
+        </div><!-- /row -->
+
+    </section><! --/wrapper -->
+</section><!-- /MAIN CONTENT -->
+{{#section 'script'}}
+<script>
+    function blockEvent(e){
+        const user_id = e.target.dataset.id;
+        $.post("/api/user/block",{
+            user_id:user_id,
+            action:'block'
+        },(data,status)=>{
+            if(status==="success"){
+                e.target.textContent="UnBlock";
+                e.target.classList.remove('btn-ablock');
+                e.target.classList.add('btn-unblock')
+                e.target.style.backgroundColor = "#13222b"
+                e.target.removeEventListener('click',blockEvent);
+                e.target.addEventListener('click',unblockEvent);
+            }
+            else{
+                console.log(data)
+            }
+        })
+    }
+    function unblockEvent(e){
+        const user_id = e.target.dataset.id;
+            $.post("/api/user/block",{
+                user_id:user_id,
+                action:'unblock'
+            },(data,status)=>{
+                if(status==="success"){
+                    e.target.textContent="Block"
+                    e.target.classList.remove('btn-unblock');
+                    e.target.classList.add('btn-ablock');
+                    e.target.removeAttribute('style');
+                    e.target.removeEventListener('click',unblockEvent);
+                    e.target.addEventListener('click',blockEvent);
+                }
+                else{
+                    console.log(data)
+                }
+            })
+    }
+    document.querySelectorAll('.btn-ablock').forEach(btn=>{
+        btn.addEventListener('click',blockEvent );
+    });
+    document.querySelectorAll('.btn-unblock').forEach(btn=>{
+        btn.addEventListener('click',unblockEvent);
+    })
+</script>
+{{/section}}

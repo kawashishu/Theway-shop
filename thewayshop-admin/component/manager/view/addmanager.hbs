@@ -1,0 +1,73 @@
+<section id="main-content">
+    <section class="wrapper">
+        <!-- BASIC FORM ELELEMNTS -->
+        <div class="row mt">
+            <div class="col-lg-12">
+                <div class="form-panel">
+                    <h4 class="mb"><i class="fa fa-angle-right"></i> Add New Manager</i>
+                    </h4>
+                    <div class="row">
+                        {{#if message}}
+                        <i class="fa fa-angle-left"></i>{{message}}<i class="fa fa-angle-right"></i>
+                        <a href="/product/{{new_pro_id}}">View</a>
+                        {{/if}}
+                        {{#if error}}
+                        <i class="fa fa-angle-left"></i>{{error}}<i class="fa fa-angle-right"></i>
+                        {{/if}}
+                    </div>
+                    <form class="form-horizontal style-form" method="post" id="add-form">
+                        {{#each manager}}
+                        <div class="form-group">
+                            <label class="col-sm-2 col-sm-2 control-label">{{@key}}</label>
+                            {{#ifeq @key 'image'}} 
+                            <div class="col-sm-4">
+                                <input type="file" id="inp" accept="image/png, image/jpeg, image/jpg"  >                               
+                                <input type="hidden" id="inp-value" name="image">
+                            </div>
+                            <div class="col-sm-4">
+                                <img id="img" width="100">
+                            </div>
+                            {{else}}
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" name="{{@key}}" placeholder="{{this}}"  >
+                            </div>
+                            {{/ifeq}}
+                        </div>
+                        {{/each}}
+                        <button type="button" id="btn-add">Add</button>
+                    </form>
+                </div>
+            </div><!-- col-lg-12-->      	
+        </div><!-- /row -->
+    </section><! --/wrapper -->
+</section><!-- /MAIN CONTENT -->
+<script>
+    function getUrl(){
+        const FR= new FileReader();                                    
+        const form = new FormData();
+        form.set('key','9304eb5630f3f1e2a368fa2ee7cf100f');
+        form.set('image',document.getElementById("inp-value").value);
+        fetch(`https://api.imgbb.com/1/upload?key=9304eb5630f3f1e2a368fa2ee7cf100f`,{
+            method:'POST',
+            body:form
+        })
+        .then(res => res.json())
+        .then(data=>{
+            document.getElementById("inp-value").value = data.data.image.url;
+            console.log(data.data.image.url);
+            document.getElementById("add-form").submit();
+        });
+    }
+    function readFile() {
+        if (this.files && this.files[0]) {                                 
+            const FR= new FileReader();                                    
+            FR.addEventListener("load", function(e) {
+                document.getElementById("img").src = e.target.result;
+                document.getElementById("inp-value").value = e.target.result.split(',')[1];
+            });                                     
+            FR.readAsDataURL( this.files[0] );
+        }
+    }
+    document.getElementById("inp").addEventListener("change", readFile)
+    document.getElementById("btn-add").addEventListener("click",getUrl)
+</script>

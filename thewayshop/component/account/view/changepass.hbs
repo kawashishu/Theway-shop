@@ -1,0 +1,60 @@
+<div class="container">
+    <div class="row">
+        <div class="col-3"></div>
+        <form class="needs-validation col-6" id="update-form" method="post" novalidate>
+            {{#if error}}
+                <h4 style="color: rgb(141, 0, 0);">{{error}}</h4>
+            {{/if}}
+            <div class="row">
+                <label for="old">Your current password</label>
+                <input type="password" class="form-control" id="old" name="oldpassword"  >
+                <i class="far fa-eye" id="toggleOPassword" style="margin-left: -30px;margin-top: 10px; cursor: pointer;"></i>
+            </div>
+            <div class="row">
+                <label for="new">Your new password</label>
+                <input type="password" class="form-control" id="new" name="newpassword"  >
+                <i class="far fa-eye" id="toggleNPassword" style="margin-left: -30px;margin-top: 10px; cursor: pointer;"></i>
+            </div>
+            <div class="row">
+                <label for="retype">Retype new password</label>
+                <input type="password" class="form-control" id="retype" name="repassword"  >
+                <i class="far fa-eye" id="toggleRPassword" style="margin-left: -30px;margin-top: 10px; cursor: pointer;"></i>
+            </div>
+            <div class="row">
+                <div class="col-5"></div>
+                <button id="btn-change" class="btn btn-danger" type="submit">Change</button>
+            </div>
+        </form>
+    </div>
+</div>
+{{#section 'script'}}
+<script>
+    const toggleOPassword = document.querySelector('#toggleOPassword');
+    const opassword = document.querySelector('#old');
+    const toggleNPassword = document.querySelector('#toggleNPassword');
+    const npassword = document.querySelector('#new');
+    const toggleRPassword = document.querySelector('#toggleRPassword');
+    const rpassword = document.querySelector('#retype');
+    toggleOPassword.addEventListener('click', function (e) {
+        // toggle the type attribute
+        const type = opassword.getAttribute('type') === 'password' ? 'text' : 'password';
+        opassword.setAttribute('type', type);
+        // toggle the eye slash icon
+        this.classList.toggle('fa-eye-slash');
+    });
+    toggleNPassword.addEventListener('click', function (e) {
+        // toggle the type attribute
+        const type = npassword.getAttribute('type') === 'password' ? 'text' : 'password';
+        npassword.setAttribute('type', type);
+        // toggle the eye slash icon
+        this.classList.toggle('fa-eye-slash');
+    });
+    toggleRPassword.addEventListener('click', function (e) {
+        // toggle the type attribute
+        const type = rpassword.getAttribute('type') === 'password' ? 'text' : 'password';
+        rpassword.setAttribute('type', type);
+        // toggle the eye slash icon
+        this.classList.toggle('fa-eye-slash');
+    });
+</script>
+{{/section}}

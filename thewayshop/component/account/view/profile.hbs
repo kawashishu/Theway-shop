@@ -1,0 +1,90 @@
+{{#section 'style'}}
+<style>
+    input[type="file"] {
+        display: none;
+    }
+    .custom-file-upload {
+        border: 1px solid #ccc;
+        display: inline-block;
+        padding: 6px 12px;
+        cursor: pointer;
+    }
+</style>
+{{/section}}
+<div class="container">
+    <div class="row">
+        <div class="col-3"></div>
+        <form class="needs-validation row" id="update-form" method="post" novalidate>
+            <div class="col-8">
+                {{#each user_info}}
+                {{#ifeq @key 'image'}}
+                {{else}}
+                <div class="row">
+                    <label for="{{@key}}">{{@key}} *</label>
+                    {{#ifeq @key 'birthday'}}
+                    <input type="date" class="form-control" name="birthday" id="{{@key}}" value="{{this}}">
+                    {{else}}
+                    <input type="text" class="form-control" name="{{@key}}"  value="{{this}}" required
+                    {{#ifeq @key 'email'}}readonly{{/ifeq}}{{#ifeq @key 'balance'}}readonly{{/ifeq}}>
+                    {{/ifeq}}
+                </div>
+                {{/ifeq}}
+                {{/each}}
+            </div>
+            <div class="col-md-4 d-flex flex-column justify-content-between">
+                <img id="img" width="200" height="200" alt="Avatar" 
+                {{#if user_info.image}}src="{{user_info.image}}"{{else}}src="/images/default-avatar.png"{{/if}}>
+                <div class="row">
+                    <div class="col-2"></div>
+                    <label for="inp" class="custom-file-upload">Change Avatar</label>
+                    <input type="file" id="inp" accept="image/png, image/jpeg, image/jpg" width="200">                               
+                    <input type="hidden" id="inp-value" name="image" >
+                </div>
+                {{#if error}}
+                <h4 style="color: rgb(141, 0, 0);">{{error}}</h4>
+                {{/if}}
+                <div class="row">
+                    <div class="col-5"></div>
+                    <button id="btn-save" class="btn btn-danger">Save</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{{#section 'script'}}
+<script>
+    function getUrl(e){
+        e.preventDefault();
+        if(!document.getElementById("inp-value").value){
+            document.getElementById("inp-value").value = '';
+            return document.getElementById("update-form").submit();
+        }
+        const FR= new FileReader();                                    
+        const form = new FormData();
+        form.set('key','9304eb5630f3f1e2a368fa2ee7cf100f');
+        form.set('image',document.getElementById("inp-value").value);
+        fetch(`https://api.imgbb.com/1/upload?key=9304eb5630f3f1e2a368fa2ee7cf100f`,{
+            method:'POST',
+            body:form
+        })
+        .then(res => res.json())
+        .then(data=>{
+            document.getElementById("inp-value").value = data.data.image.url;
+            console.log(data.data.image.url);
+            document.getElementById("update-form").submit();
+        });
+    }
+    function readFile() {
+        if (this.files && this.files[0]) {                                 
+            const FR= new FileReader();                                    
+            FR.addEventListener("load", function(e) {
+                document.getElementById("img").src = e.target.result;
+                document.getElementById("inp-value").value = e.target.result.split(',')[1];
+            });                                     
+            FR.readAsDataURL( this.files[0] );
+        }
+    }
+    document.getElementById("inp").addEventListener("change", readFile)
+    document.getElementById("btn-save").addEventListener("click",getUrl)
+</script>
+{{/section}}

@@ -1,0 +1,146 @@
+{{#section 'style'}}
+<style>
+    input[type="file"] {
+        display: none;
+    }
+    .custom-file-upload {
+        border: 1px solid #ccc;
+        display: inline-block;
+        padding: 6px 12px;
+        cursor: pointer;
+    }
+</style>
+{{/section}}
+<section id="main-content">
+    <section class="wrapper">
+        <!-- BASIC FORM ELELEMNTS -->
+        <div class="row mt">
+            <div class="col-lg-12">
+                <div class="form-panel">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <h4 class="mb"><i class="fa fa-angle-right"></i> {{product.title}}</i></h4>
+                        </div>
+                        {{#if message}}
+                        <i class="fa fa-angle-left"></i>{{message}}<i class="fa fa-angle-right"></i>
+                        <a href="/product/{{new_pro_id}}">View</a>
+                        {{/if}}
+                        {{#if error}}
+                        <i class="fa fa-angle-left"></i>{{error}}<i class="fa fa-angle-right"></i>
+                        {{/if}}
+                    </div>
+                    <form class="form-horizontal style-form" method="post" id="add-form">
+                        {{#each product}}
+                        <div class="form-group">
+                            {{#ifeq @key 'image'}} 
+                            <label class="col-sm-2 col-sm-2 control-label">{{@key}}</label>
+                            <div class="col-sm-3">
+                                <label for="inp" class="custom-file-upload">Main img</label>
+                                <input type="file" id="inp" accept="image/png, image/jpeg, image/jpg"  >                               
+                                <input type="hidden" id="inp-value" name="image" required>
+                                <img id="img" width="100">
+                            </div>
+                            <div class="col-sm-2">
+                                <label for="sinp" class="custom-file-upload">Sub img</label>
+                                <input type="file" multiple id="sinp" accept="image/png, image/jpeg, image/jpg"  >                               
+                                <input type="hidden" id="sinp-value" name="subimage" required>
+                            </div>
+                            <div class="col-sm-1" id="sub-img-container" style="display: flex; justify-content:space-between;">
+                                <img id="simg1" width="100">
+                            </div>
+                            {{else}}
+                            {{#ifeq @key 'tag_id'}}
+                            <label class="col-sm-2 col-sm-2 control-label">tag</label>
+                            <div class="col-sm-4">
+                                <select class="form-control"  name="{{@key}}" >
+                                    {{#each ../tag}}
+                                    <option value="{{this.id}}">{{this.name}}</option>
+                                    {{/each}}
+                                </select>
+                            </div>
+                            {{else}}
+                            <label class="col-sm-2 col-sm-2 control-label">{{@key}}</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" name="{{@key}}" placeholder="{{this}}" required >
+                            </div>
+                            {{/ifeq}}
+                            {{/ifeq}}
+                        </div>
+                        {{/each}}
+                        <button type="button" id="btn-add">Add</button>
+                    </form>
+                </div>
+            </div><!-- col-lg-12-->      	
+        </div><!-- /row -->
+    </section><! --/wrapper -->
+</section><!-- /MAIN CONTENT -->
+{{#section 'script'}}
+<script>
+    async function getUrl(){
+        const url ="https://api.imgbb.com/1/upload?key=9304eb5630f3f1e2a368fa2ee7cf100f";
+        if(!document.getElementById("inp-value").value||!document.getElementById("sinp-value").value){
+            document.getElementById("inp").focus();
+            document.getElementById("sinp").focus();
+            return;
+        }
+        const FR= new FileReader();                                    
+        const form = new FormData();
+        form.set('key','9304eb5630f3f1e2a368fa2ee7cf100f');
+        form.set('image',document.getElementById("inp-value").value);
+        const datamain = await fetch(url,{
+            method:'POST',
+            body:form
+        })
+        .then(res => res.json());
+        const sub_img_arr = JSON.parse(document.getElementById("sinp-value").value)
+        const data_link =[];
+        for await(const img of sub_img_arr){
+            form.set('image',img);
+            const data = await fetch(url,{
+                method:'POST',
+                body:form
+            })
+            .then(res => res.json());
+            data_link.push(data.data.image.url)
+        }
+
+        document.getElementById("inp-value").value = datamain.data.image.url;
+        document.getElementById("sinp-value").value = JSON.stringify(data_link);
+        document.getElementById("add-form").submit();
+    }
+    function readFile() {
+        if (this.files && this.files[0]) {                                 
+            const FR= new FileReader();                                    
+            FR.addEventListener("load", function(e) {
+                document.getElementById("img").src = e.target.result;
+                const val = document.getElementById("inp-value").value;
+                document.getElementById("inp-value").value = e.target.result.split(',')[1];
+            });                                     
+            FR.readAsDataURL( this.files[0] );
+        }
+    }
+    async function readFile1() {
+        if (this.files && this.files[0]) {       
+            for(let i =0;i<this.files.length;i++){
+                const FR= new FileReader();                                    
+                FR.addEventListener("load", function(e) {
+                document.getElementById("sub-img-container").innerHTML += `<img src="${e.target.result}" width="100">`;
+                let val = document.getElementById("sinp-value").value;
+                if(!val.length > 0){
+                    val = [];
+                }
+                else{
+                    val = JSON.parse(val);
+                }
+                val.push(e.target.result.split(',')[1]);
+                document.getElementById("sinp-value").value = JSON.stringify(val);
+                });
+                FR.readAsDataURL(this.files[i]);
+            }                                   
+        }
+    }
+    document.getElementById("inp").addEventListener("change", readFile)
+    document.getElementById("sinp").addEventListener("change", readFile1)
+    document.getElementById("btn-add").addEventListener("click",getUrl)
+</script>
+{{/section}}

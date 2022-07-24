@@ -1,0 +1,130 @@
+{{#section 'style'}}
+<style>
+</style>
+{{/section}}
+<!-- Start Wishlist  -->
+<div class="wishlist-box-main">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="table-main table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Images</th>
+                                <th>Product Name</th>
+                                <th>Unit Price </th>
+                                <th>Stock</th>
+                                <th>Add Item</th>
+                                <th>Remove</th>
+                            </tr>
+                        </thead>
+                        <tbody id="wishlist-body">    
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td>
+                                    <div id="loader" style="">
+                                         <div class="clock-loader"></div>
+                                    </div>
+                                </td>
+                                <td></td>
+                                <td></td>
+                            </tr>           
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Wishlist -->
+{{#section 'script'}}
+<script>
+    const wishList_container = document.querySelector('#wishlist-body');
+    if(user_id){
+        $.get(`/api/account/${user_id}/wishlist`,(data,status)=>{
+            if(status==='success'){
+                updateView(data);
+                window.localStorage.setItem('user_wishlist',JSON.stringify(data));  
+            }
+            else{
+                console.log(data);
+            }
+        })
+    }
+    else{
+        const wishList = window.localStorage.getItem('wishList');
+        if(wishList){
+            updateView(JSON.parse(wishList));
+        }
+    }
+    function updateView(data){
+        wishList_container.innerHTML='';
+        data.forEach(pro=>{
+            const tr =`<tr>
+                        <td class="thumbnail-img">
+                            <a href="/product/${pro.id}">
+                        <img class="img-fluid" src="${pro.image}" alt="" />
+                    </a>
+                        </td>
+                        <td class="name-pr">
+                            <a href="/product/${pro.id}">
+                        ${pro.title}
+                    </a>
+                        </td>
+                        <td class="price-pr">
+                            <p>$ ${pro.price}</p>
+                        </td>
+                        <td class="quantity-box">In Stock</td>
+                        <td class="add-pr">
+                            <a class="btn hvr-hover cart" data-id="${pro.id}" data-image="${pro.image}"  data-title="${pro.title}" data-price="${pro.price}">Add to Cart</a>
+                        </td>
+                        <td class="remove-pr">
+                        <i class="fas fa-times remove-wishlist" style="cursor:pointer;" data-id=${pro.id}></i>
+                        </td>
+                    </tr>`;
+            wishList_container.innerHTML+=tr;
+        })
+        add_remove_event();
+        add_cart_event();
+    }
+    function removeWishlistHandler(e){
+        const id = e.target.dataset.id
+        if(!user_id){
+            let wishList = JSON.parse(window.localStorage.getItem('wishList'));
+            wishList = wishList.filter(e=>e.id != id);
+            window.localStorage.setItem('wishList',JSON.stringify(wishList));
+            updateView(wishList);
+        }
+        else{
+            const tr_container = e.target.parentElement.parentElement;
+            tr_container.innerHTML=`<tr>
+                                <td></td>
+                                <td></td>
+                                <td>
+                                    <div id="loader" style="">
+                                         <div class="clock-loader"></div>
+                                    </div>
+                                </td>
+                                <td></td>
+                                <td></td>
+                            </tr>      `;
+            $.post('/api/account/wishlist',{
+                user_id:user_id,
+                pro_id:id
+            },(data,status)=>{
+                if(status === 'success'){
+                    tr_container.remove();
+                }
+            })
+        }
+        
+    }
+    function add_remove_event(){
+        document.querySelectorAll('.remove-wishlist').forEach(a=>{
+            a.addEventListener('click',removeWishlistHandler);
+        })
+    }
+</script>
+{{/section}}

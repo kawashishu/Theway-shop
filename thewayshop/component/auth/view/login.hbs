@@ -1,0 +1,220 @@
+{{#section 'style'}}
+<style>
+	.forgot{
+		display: none;
+	}
+	#forgot-link:checked ~ .forgot{
+		display: block;
+	}
+	#togglePassword,#toggleRPassword{
+        margin-left: -30px;
+        margin-top: 10px; 
+        cursor: pointer;
+        position: absolute;
+        right: 5%;
+        top: 50%;
+        color: rgb(46, 226, 211);
+    }
+</style>
+{{/section}}
+
+<div class="login-wrap">
+	<div class="login-html">
+		{{#if error}}
+		<h4 style="color: rgb(255 99 99);">{{error}}</h4>
+		{{/if}}
+		{{#if message}}
+		<h4 style="color: rgb(46, 226, 211);">{{message}}</h4>
+		{{/if}}
+		<input id="tab-1" type="radio" name="tab" class="sign-in" {{#if register}}{{else}}checked{{/if}}><label for="tab-1" class="tab">Sign In</label>
+		<input id="tab-2" type="radio" name="tab" class="sign-up" {{#if register}}checked{{/if}}><label for="tab-2" class="tab">Sign Up</label>
+		<div class="login-form">
+			<div  class="sign-in-htm">
+				<form action="/login" method="post">
+					<div class="group">
+						<label for="user" class="label">Email</label>
+						<input id="user" type="text" class="input" name="email">
+					</div>
+					<div class="group">
+						<label for="pass" class="label">Password</label>
+						<input id="login-pass" type="password" class="input" data-type="password" name="password">
+					</div>
+					<div class="group">
+						<input id="check" type="checkbox" class="check" checked>
+						<label for="check"><span class="icon"></span> Keep me Signed in</label>
+					</div>
+					<div class="group">
+						<input type="submit" class="button" value="Sign In">
+					</div>
+					{{#if verify}}
+					<div class="group row">
+						<div class="col-sm-6">
+							<h4 style="color: rgb(46, 226, 211);">{{verify}}</h4>	
+						</div>
+						<div class="col-sm-6">
+							<button id="btn-resend" data-email="{{email}}" class="button">RESEND</button>
+						</div>
+					</div>
+					{{/if}}
+					<div class="hr"></div>
+				</form>
+				<div class="foot-lnk ">
+					<input type="radio" id="forgot-link" class="button" style="display: none;"><label for="forgot-link" style="cursor: pointer;">Forgot password?</label>
+					<div class="group forgot">
+						<label for="user" class="label">Email</label>
+						<input id="forgot-email" type="text" class="input" name="email">
+					</div>
+					<div class="group forgot">
+						<button id="btn-forgot" class="button" style="text-align: center;">Send Link</button>
+					</div>
+				</div>
+			</div>
+			<form action="/register" method="post" class="sign-up-htm" id="register-form">
+				<div class="group">
+					<label for="user" class="label">Email</label>
+					<input id="user" type="text" class="input" name="email">
+					<span id="reg-email-noti"></span>
+				</div>
+				<div class="group">
+					<label for="fullname" class="label">Full name</label>
+					<input id="fullname" type="text" class="input" name="name">
+				</div>
+				<div class="group">
+					<label for="birthday" class="label">Birthday</label>
+					<input id="birthday" type="date" class="input" name="birthday">
+				</div>
+				<div class="group">
+					<label for="address" class="label">Address</label>
+					<input id="address" type="text" class="input" name="address">
+				</div>
+				<div class="group" style="position: relative;">
+					<label for="pass" class="label">Password</label>
+					<input id="pass" type="password" class="input"  name="password"><i class="far fa-eye" id="togglePassword" ></i>
+				</div>
+				<div class="group" style="position: relative;">
+					<label for="pass" class="label">Repeat Password</label>
+					<input id="repass" type="repassword" class="input"  name="repassword"><i class="far fa-eye" id="toggleRPassword" ></i>
+				</div>
+				
+				<div class="group">
+					<input type="submit" class="button" value="Sign Up">
+				</div>
+				<div class="hr"></div>
+				<div class="foot-lnk">
+					<label for="tab-1">Already Member?</a>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+{{#section 'script'}}
+<script>
+
+	// send email
+	const btn_resend = document.querySelector('#btn-resend');
+	const btn_forgot = document.querySelector('#btn-forgot');
+	if(btn_resend){
+		btn_resend.addEventListener('click',(e)=>{
+			e.preventDefault();
+			const email = e.target.dataset.email;
+			$.post('/api/account/resend',{
+				email: email
+			},(data,status)=>{
+				e.target.disabled = true;
+				setTimeout(function(){  
+					const element = document.querySelector("#btn-resend");
+					element.disabled = false;
+				}, 30000);
+			})
+		});
+	}
+
+	btn_forgot.addEventListener('click',(e)=>{
+		console.log('e');
+		e.preventDefault();
+		const email = document.querySelector('#forgot-email').value;
+		console.log(email);
+		if(!email){
+			return;
+		}
+		document.querySelector('#forgot-email').value = ''
+		$.post('/api/account/forgot',{
+			email: email
+		},(data,status)=>{
+			e.target.disabled = true;
+			setTimeout(function(){  
+				const element = document.querySelector("#btn-forgot");
+				element.disabled = false;
+			}, 30000);
+		})
+	})
+
+	//register valid
+	const re =
+  /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+	const reg_email_noti = document.querySelector('#reg-email-noti')
+	const reg_email = document.querySelector('#register-form #user');
+	reg_email.addEventListener('focusout',()=>{
+		const value = reg_email.value;
+		if(!value){
+			reg_email.style.border = 'none';
+			reg_email_noti.textContent ='';
+			return;
+		}
+		if(String(value).toLocaleLowerCase().match(re)){
+			$.post('/api/account/exist',{
+				email:value
+			},(data,status)=>{
+				if(status==='success'){
+					if(data==='existed'){
+						reg_email.style.border = '1px solid red';
+						reg_email_noti.style.color ='rgb(255 99 99)';
+						reg_email_noti.textContent='This email is already exist, try another one.';
+						return;
+					}
+					else if(data==='available'){
+						reg_email.style.border = 'none';
+						reg_email_noti.style.color = 'rgb(46, 226, 211)';
+						reg_email_noti.textContent = 'This email is valid';
+					}
+					else{
+						reg_email.style.border = '1px solid red';
+						reg_email_noti.style.color ='rgb(255 99 99)';
+						reg_email_noti.textContent='Small error on us, please try again';
+					}
+				}
+				else{
+					reg_email.style.border = '1px solid red';
+					reg_email_noti.style.color ='rgb(255 99 99)';
+					reg_email_noti.textContent='Small error on us, please try again';
+				}
+			})
+		}
+		else{
+			reg_email.style.border = '1px solid red';
+			reg_email_noti.style.color ='rgb(255 99 99)';
+			reg_email_noti.textContent='This email is not valid, must match "*@*.*" .';
+		}
+	})
+
+
+	//password eye
+	const toggleOPassword = document.querySelector('#togglePassword');
+    const toggleNPassword = document.querySelector('#toggleRPassword');
+
+    togglePassword.addEventListener('click', function (e) {
+        // toggle the type attribute
+        const type = pass.getAttribute('type') === 'password' ? 'text' : 'password';
+        pass.setAttribute('type', type);
+        // toggle the eye slash icon
+        this.classList.toggle('fa-eye-slash');
+    });
+    toggleRPassword.addEventListener('click', function (e) {
+        // toggle the type attribute
+        const type = repass.getAttribute('type') === 'password' ? 'text' : 'password';
+        repass.setAttribute('type', type);
+        // toggle the eye slash icon
+        this.classList.toggle('fa-eye-slash');
+    });
+</script>
+{{/section}}
