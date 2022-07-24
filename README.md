@@ -69,3 +69,45 @@ Kiểm tra các ràng buộc về sản phẩm
 Quản lý đơn đặt hàng (đã giao, chưa giao, đang giao)
 Thống kê doanh số bán hàng theo các ngày, tuần, tháng, năm, quý
 Thống kê số lượng bán top 10 của sản phẩm, của gian hàng
+
+
+
+* Guildine: 
+Tải và cài đặt postgres server. Hướng dẫn các bước từ trang www.postgresql.org
+Mở powershell, gõ “psql -U postgres” . Tại đây sẽ hỏi mật khẩu khi cài đặt chúng ta đã đặt
+Sau khi đã kết nối được tới server ta sẽ gõ lệnh sau để tạo database : “CREATE DATABASE thewayshop WITH ENCODING ‘UTF8’ ;”
+Sau đó dùng lệnh “\c thewayshop ” để kết nối với database
+Dùng lệnh “ \i ‘path/postgres.sql’ ” với path là đường dẫn tới file postgres.sql nằm trong thư mục database
+Lấy các thông tin cần thiết để thay vào chuỗi sau:"postgres://YourUserName:YourPassword@YourHostname:5432/YourDatabaseName"
+Thay chuỗi trên với chuỗi phía sau biến “DATABASE_URL_LOCAL” trong file .env của mỗi project
+
+App:
+Tải và cài đặt nodejs, npm
+Thêm npm vào path môi trường
+Mở cmd tại thư mục chứa project muốn chạy.
+Gõ “ npm install”
+Chờ chạy xong thì gõ “ npm start”.
+Bây giờ lên một browser bất kỳ, trang shop sẽ được chạy trên port 3000 : “localhost:3000” . Còn trang admin sẽ được chạy trên port 3001 : “localhost:3001”.
+
+
+Deploy: heroku 
+Tạo một app mới trong heroku dashboard
+Database: 
+Vào trang https://elements.heroku.com/addons/heroku-postgresql
+Nhấn install heroku postgres
+Chọn app mà bạn vừa tạo
+Kết nối với database từ powershell với connect string: "postgres://YourUserName:YourPassword@YourHostname:5432/YourDatabaseName" các thông tin được lấy từ “https://data.heroku.com/” chọn database mình vừa tạo và vào setting=> view Credentials
+Chạy script postgres.sql bằng “ \i ‘path/postgres.sql’ ”
+Vào app từ heroku dashboard
+Vào mục :deploy
+Có thể cài đặt heroku CLI và deploy theo hướng dẫn
+Hoặc sử dụng git bash:
+git repository của heroku có dạng 
+“https://git.heroku.com/YOUR_APP_NAME.git”
+Từ terminal của git bash của 1 project có sẵn của chúng ta ta bắt đầu gõ: 
+git init
+git remote add heroku https://git.heroku.com/YOUR_APP_NAME.git
+git add .
+git commit -m “init”
+git push heroku master ( hoặc là main)
+
